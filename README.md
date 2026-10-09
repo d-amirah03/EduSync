@@ -17,13 +17,13 @@ An AI-powered attendance system that lets educators take attendance quickly by s
 
 ## Team
 
-| Name | Role / Responsibility |
-|------|-----------------------|
-| Wan Adam Danish | Chairperson; school interview/survey liaison |
-| Abdul Rahim bin Idris | Minute taker; CI/CD setup |
-| Nur Damia | GitHub repository setup |
-| Qhairunnisa | UI wireframes (Scan screen and Dashboard) |
-| Batrisya | AI API research (cost / privacy) |
+| Name | Matric No. | TSPi Role |
+|------|------------|-----------|
+| Wan Adam Danish bin Wan Abit | 103014 | Project Manager |
+| Batrisya Qistina binti Jumry | 103516 | System Analyst |
+| Nur Damia Amirah binti Meruni | 100316 | AI Integration |
+| Qhairunnisa Shahirah binti Zakaria | 106089 | Mobile Architect |
+| Abdul Rahim bin Idris | 102368 | Quality Assurance |
 
 ## Repository Structure
 

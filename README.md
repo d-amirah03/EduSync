@@ -37,8 +37,8 @@ An AI-powered attendance system that lets educators take attendance quickly by s
 ## Getting Started
 
 ```bash
-git clone https://github.com/<org-or-username>/<repo-name>.git
-cd <repo-name>
+git clone https://github.com/d-amirah03/EduSync.git
+cd EduSync
 # Add install and run instructions once the tech stack is confirmed
 ```
 

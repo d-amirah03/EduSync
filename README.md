@@ -58,3 +58,5 @@ cd EduSync
 | 3 | Draft initial UI wireframes (Scan screen and Dashboard) | Qhairunnisa | 11/10/2026 |
 | 4 | Research AI API Constraints (Cost/Privacy) | Nur Damia and Batrisya | 11/10/2026 |
 | 5 | Setup GitHub CI/CD | Abdul Rahim | 12/10/2026 |
+
+testttttt

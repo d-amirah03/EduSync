@@ -59,6 +59,7 @@ cd EduSync
 | 4 | Research AI API Constraints (Cost/Privacy) | Nur Damia and Batrisya | 11/10/2026 |
 | 5 | Setup GitHub CI/CD | Abdul Rahim | 12/10/2026 |
 
+
 testttttt
 
 ## 📱 UI & Screen Designs
@@ -70,3 +71,5 @@ Interactive designs are built in Figma: [View EduSync Figma Project](https://www
 
 ### Administrator Web Dashboard
 ![Admin Web Dashboard](docs/mockups/admin-web-dashboard.png)
+
+

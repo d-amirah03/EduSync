@@ -369,7 +369,9 @@ class _AdminTeachersState extends State<AdminTeachers> {
             ]),
       ),
     );
-    if (name == null || name.isEmpty) return;
+    if (name == null || name.isEmpty) {
+      return;
+    }
     setState(() {
       list.add(_T(name.startsWith('Cikgu') ? name : 'Cikgu $name', false));
       added++;

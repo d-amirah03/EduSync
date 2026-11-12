@@ -454,8 +454,9 @@ class _DeskDashboardState extends State<DeskDashboard> {
                   options: const ['Today', 'Yesterday'],
                   onChanged: (s) {
                     setState(() => day = s);
-                    if (s != 'Today')
+                    if (s != 'Today') {
                       toast(context, 'Sample data is only available for today');
+                    }
                   })),
         ]),
         DeskTable(
@@ -850,7 +851,9 @@ class _DeskTeachersState extends State<DeskTeachers> {
         ],
       ),
     );
-    if (res == null || res.isEmpty) return;
+    if (res == null || res.isEmpty) {
+      return;
+    }
     final name = res.startsWith('Cikgu') ? res : 'Cikgu $res';
     setState(() {
       if (t == null) {

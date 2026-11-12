@@ -43,8 +43,9 @@ ThemeData buildTheme(bool dark) {
   final prev = C.dark;
   C.dark = dark;
   final b = dark ? Brightness.dark : Brightness.light;
-  final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF185FA5), brightness: b)
-      .copyWith(primary: C.primary, surface: C.bg, onSurface: C.ink);
+  final scheme =
+      ColorScheme.fromSeed(seedColor: const Color(0xFF185FA5), brightness: b)
+          .copyWith(primary: C.primary, surface: C.bg, onSurface: C.ink);
   final base = ThemeData(
     useMaterial3: true,
     brightness: b,
@@ -53,7 +54,8 @@ ThemeData buildTheme(bool dark) {
     canvasColor: C.bg,
     dividerColor: C.line,
   );
-  final out = base.copyWith(textTheme: GoogleFonts.interTextTheme(base.textTheme));
+  final out =
+      base.copyWith(textTheme: GoogleFonts.interTextTheme(base.textTheme));
   C.dark = prev;
   return out;
 }
@@ -70,7 +72,8 @@ List<Widget> gap(List<Widget> l, double h) {
 void toast(BuildContext c, String msg) {
   ScaffoldMessenger.of(c)
     ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text(msg), behavior: SnackBarBehavior.floating));
+    ..showSnackBar(
+        SnackBar(content: Text(msg), behavior: SnackBarBehavior.floating));
 }
 
 class Screen extends StatelessWidget {
@@ -90,13 +93,17 @@ class PageBody extends StatelessWidget {
       Expanded(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: gap(children, 14)),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: gap(children, 14)),
         ),
       ),
       if (footer.isNotEmpty)
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: gap(footer, 8)),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: gap(footer, 8)),
         ),
     ]);
   }
@@ -109,7 +116,9 @@ class BackHeader extends StatelessWidget {
   Widget build(BuildContext context) => Row(children: [
         InkWell(
           onTap: () => Navigator.of(context).pop(),
-          child: Padding(padding: const EdgeInsets.all(4), child: Icon(Icons.arrow_back, size: 20, color: C.ink)),
+          child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(Icons.arrow_back, size: 20, color: C.ink)),
         ),
         const SizedBox(width: 8),
         Text(title, style: ts(16, w: FontWeight.w500)),
@@ -122,12 +131,16 @@ class Heading extends StatelessWidget {
   final Widget? badge;
   const Heading(this.title, {super.key, this.sub, this.badge});
   @override
-  Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  Widget build(BuildContext context) =>
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text(title, style: ts(20, w: FontWeight.w600)),
           if (badge != null) ...[const SizedBox(width: 8), badge!],
         ]),
-        if (sub != null) ...[const SizedBox(height: 2), Text(sub!, style: ts(12, color: C.muted))],
+        if (sub != null) ...[
+          const SizedBox(height: 2),
+          Text(sub!, style: ts(12, color: C.muted))
+        ],
       ]);
 }
 
@@ -136,7 +149,8 @@ class AppButton extends StatelessWidget {
   final IconData? icon;
   final VoidCallback? onTap;
   final bool outlined;
-  const AppButton(this.label, {super.key, this.icon, this.onTap, this.outlined = false});
+  const AppButton(this.label,
+      {super.key, this.icon, this.onTap, this.outlined = false});
   @override
   Widget build(BuildContext context) {
     final fg = outlined ? C.ink : Colors.white;
@@ -152,7 +166,10 @@ class AppButton extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            if (icon != null) ...[Icon(icon, size: 18, color: fg), const SizedBox(width: 8)],
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: fg),
+              const SizedBox(width: 8)
+            ],
             Text(label, style: ts(15, w: FontWeight.w500, color: fg)),
           ]),
         ),
@@ -169,7 +186,8 @@ class Pill extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
+        decoration:
+            BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
         child: Text(text, style: ts(12, w: FontWeight.w500, color: fg)),
       );
 }
@@ -182,11 +200,14 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(color: danger ? C.redBg : C.surface, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+            color: danger ? C.redBg : C.surface,
+            borderRadius: BorderRadius.circular(12)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label, style: ts(12, color: danger ? C.red : C.muted)),
           const SizedBox(height: 4),
-          Text(value, style: ts(24, w: FontWeight.w600, color: danger ? C.red : C.ink)),
+          Text(value,
+              style: ts(24, w: FontWeight.w600, color: danger ? C.red : C.ink)),
         ]),
       );
 }
@@ -197,7 +218,8 @@ class NoteBox extends StatelessWidget {
   final Color fg;
   final Color bg;
   final VoidCallback? onTap;
-  const NoteBox(this.icon, this.text, {super.key, required this.fg, required this.bg, this.onTap});
+  const NoteBox(this.icon, this.text,
+      {super.key, required this.fg, required this.bg, this.onTap});
   @override
   Widget build(BuildContext context) => Material(
         color: bg,
@@ -225,10 +247,13 @@ class LineRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(border: Border(bottom: BorderSide(color: C.line))),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        decoration:
+            BoxDecoration(border: Border(bottom: BorderSide(color: C.line))),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(left, style: ts(14)),
-          Text(right, style: ts(14, w: FontWeight.w500, color: rightColor ?? C.ink)),
+          Text(right,
+              style: ts(14, w: FontWeight.w500, color: rightColor ?? C.ink)),
         ]),
       );
 }
@@ -251,7 +276,9 @@ class _DashPainter extends CustomPainter {
       ..color = C.blue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
-    final path = Path()..addRRect(RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(12)));
+    final path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+          Offset.zero & size, const Radius.circular(12)));
     for (final m in path.computeMetrics()) {
       var d = 0.0;
       while (d < m.length) {
@@ -275,7 +302,11 @@ class BottomNav extends StatelessWidget {
   final List<NavItem> items;
   final int index;
   final ValueChanged<int> onTap;
-  const BottomNav({super.key, required this.items, required this.index, required this.onTap});
+  const BottomNav(
+      {super.key,
+      required this.items,
+      required this.index,
+      required this.onTap});
   @override
   Widget build(BuildContext context) => Container(
         color: C.surface,
@@ -283,18 +314,25 @@ class BottomNav extends StatelessWidget {
           top: false,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              for (var i = 0; i < items.length; i++)
-                InkWell(
-                  onTap: () => onTap(i),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(items[i].icon, size: 22, color: i == index ? C.blue : C.muted),
-                    const SizedBox(height: 2),
-                    Text(items[i].label,
-                        style: ts(11, w: i == index ? FontWeight.w500 : FontWeight.w400, color: i == index ? C.blue : C.muted)),
-                  ]),
-                ),
-            ]),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (var i = 0; i < items.length; i++)
+                    InkWell(
+                      onTap: () => onTap(i),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        Icon(items[i].icon,
+                            size: 22, color: i == index ? C.blue : C.muted),
+                        const SizedBox(height: 2),
+                        Text(items[i].label,
+                            style: ts(11,
+                                w: i == index
+                                    ? FontWeight.w500
+                                    : FontWeight.w400,
+                                color: i == index ? C.blue : C.muted)),
+                      ]),
+                    ),
+                ]),
           ),
         ),
       );
@@ -304,7 +342,11 @@ class PickerField extends StatelessWidget {
   final String value;
   final List<String> options;
   final ValueChanged<String> onChanged;
-  const PickerField({super.key, required this.value, required this.options, required this.onChanged});
+  const PickerField(
+      {super.key,
+      required this.value,
+      required this.options,
+      required this.onChanged});
   @override
   Widget build(BuildContext context) => InkWell(
         borderRadius: BorderRadius.circular(10),
@@ -315,7 +357,8 @@ class PickerField extends StatelessWidget {
               for (final o in options)
                 ListTile(
                   title: Text(o, style: ts(14)),
-                  trailing: o == value ? Icon(Icons.check, color: C.blue) : null,
+                  trailing:
+                      o == value ? Icon(Icons.check, color: C.blue) : null,
                   onTap: () {
                     onChanged(o);
                     Navigator.pop(context);
@@ -326,8 +369,11 @@ class PickerField extends StatelessWidget {
         ),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-          decoration: BoxDecoration(border: Border.all(color: C.line), borderRadius: BorderRadius.circular(10)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          decoration: BoxDecoration(
+              border: Border.all(color: C.line),
+              borderRadius: BorderRadius.circular(10)),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text(value, style: ts(14)),
             Icon(Icons.keyboard_arrow_down, size: 18, color: C.muted),
           ]),
@@ -364,7 +410,11 @@ class ThemeChips extends StatelessWidget {
   Widget build(BuildContext context) => ValueListenableBuilder<ThemeMode>(
         valueListenable: themeMode,
         builder: (context, m, _) => Wrap(spacing: 8, children: [
-          for (final e in const {'System': ThemeMode.system, 'Light': ThemeMode.light, 'Dark': ThemeMode.dark}.entries)
+          for (final e in const {
+            'System': ThemeMode.system,
+            'Light': ThemeMode.light,
+            'Dark': ThemeMode.dark
+          }.entries)
             ChoiceChip(
               label: Text(e.key, style: ts(12)),
               selected: m == e.value,

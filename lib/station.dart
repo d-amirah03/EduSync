@@ -3,10 +3,28 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'theme.dart';
 
-const _days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const _days = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
+];
 const _months = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
 ];
 
 String fmtTime(DateTime d) {
@@ -15,7 +33,8 @@ String fmtTime(DateTime d) {
   return '$h:$m ${d.hour < 12 ? 'AM' : 'PM'}';
 }
 
-String fmtDate(DateTime d) => '${_days[d.weekday - 1]}, ${d.day} ${_months[d.month - 1]} ${d.year}';
+String fmtDate(DateTime d) =>
+    '${_days[d.weekday - 1]}, ${d.day} ${_months[d.month - 1]} ${d.year}';
 
 class StationScreen extends StatefulWidget {
   const StationScreen({super.key});
@@ -55,15 +74,18 @@ class _StationScreenState extends State<StationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Sekolah Kebangsaan Paya Mebi', style: ts(wide ? 18 : 15, color: C.muted)),
+          Text('Sekolah Kebangsaan Paya Mebi',
+              style: ts(wide ? 18 : 15, color: C.muted)),
           const SizedBox(height: 10),
           Text(fmtTime(now), style: ts(wide ? 72 : 48, w: FontWeight.w600)),
           const SizedBox(height: 10),
           Text(fmtDate(now), style: ts(wide ? 20 : 16, color: C.muted)),
           const SizedBox(height: 34),
-          Text('Scan to check in or out', style: ts(wide ? 32 : 24, w: FontWeight.w600)),
+          Text('Scan to check in or out',
+              style: ts(wide ? 32 : 24, w: FontWeight.w600)),
           const SizedBox(height: 10),
-          Text('Open EduSync on your phone and tap Scan', style: ts(wide ? 18 : 15, color: C.muted)),
+          Text('Open EduSync on your phone and tap Scan',
+              style: ts(wide ? 18 : 15, color: C.muted)),
           const SizedBox(height: 10),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -106,14 +128,25 @@ class _StationScreenState extends State<StationScreen> {
                   final wide = c.maxWidth >= 800;
                   if (wide) {
                     return Row(children: [
-                      Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 48), child: _info(true))),
-                      Padding(padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 48), child: _qr(300)),
+                      Expanded(
+                          child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 64, vertical: 48),
+                              child: _info(true))),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 64, vertical: 48),
+                          child: _qr(300)),
                     ]);
                   }
                   final s = min(300.0, c.maxWidth - 140);
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
-                    child: Column(children: [_info(false), const SizedBox(height: 24), _qr(s)]),
+                    child: Column(children: [
+                      _info(false),
+                      const SizedBox(height: 24),
+                      _qr(s)
+                    ]),
                   );
                 }),
               ),
@@ -122,7 +155,9 @@ class _StationScreenState extends State<StationScreen> {
             Positioned(
               top: 4,
               left: 4,
-              child: IconButton(icon: Icon(Icons.arrow_back, color: C.muted), onPressed: () => Navigator.of(context).pop()),
+              child: IconButton(
+                  icon: Icon(Icons.arrow_back, color: C.muted),
+                  onPressed: () => Navigator.of(context).pop()),
             ),
           ]),
         ),
@@ -140,7 +175,8 @@ class QrPainter extends CustomPainter {
     final black = Paint()..color = Colors.black;
     final white = Paint()..color = Colors.white;
     final rnd = Random(seed);
-    bool finder(int x, int y) => (x < 8 && y < 8) || (x > 16 && y < 8) || (x < 8 && y > 16);
+    bool finder(int x, int y) =>
+        (x < 8 && y < 8) || (x > 16 && y < 8) || (x < 8 && y > 16);
     for (var y = 0; y < n; y++) {
       for (var x = 0; x < n; x++) {
         final on = rnd.nextDouble() < 0.45;
@@ -150,9 +186,16 @@ class QrPainter extends CustomPainter {
       }
     }
     for (final o in const [Offset(0, 0), Offset(18, 0), Offset(0, 18)]) {
-      canvas.drawRect(Rect.fromLTWH(o.dx * cell, o.dy * cell, 7 * cell, 7 * cell), black);
-      canvas.drawRect(Rect.fromLTWH((o.dx + 1) * cell, (o.dy + 1) * cell, 5 * cell, 5 * cell), white);
-      canvas.drawRect(Rect.fromLTWH((o.dx + 2) * cell, (o.dy + 2) * cell, 3 * cell, 3 * cell), black);
+      canvas.drawRect(
+          Rect.fromLTWH(o.dx * cell, o.dy * cell, 7 * cell, 7 * cell), black);
+      canvas.drawRect(
+          Rect.fromLTWH(
+              (o.dx + 1) * cell, (o.dy + 1) * cell, 5 * cell, 5 * cell),
+          white);
+      canvas.drawRect(
+          Rect.fromLTWH(
+              (o.dx + 2) * cell, (o.dy + 2) * cell, 3 * cell, 3 * cell),
+          black);
     }
   }
 

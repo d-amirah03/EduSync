@@ -11,7 +11,12 @@ class DeskButton extends StatelessWidget {
   final VoidCallback? onTap;
   final bool primary;
   final bool fill;
-  const DeskButton(this.label, {super.key, this.icon, this.onTap, this.primary = false, this.fill = false});
+  const DeskButton(this.label,
+      {super.key,
+      this.icon,
+      this.onTap,
+      this.primary = false,
+      this.fill = false});
   @override
   Widget build(BuildContext context) {
     final fg = primary ? Colors.white : C.ink;
@@ -26,10 +31,16 @@ class DeskButton extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-          child: Row(mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
-            if (icon != null) ...[Icon(icon, size: 16, color: fg), const SizedBox(width: 8)],
-            Text(label, style: ts(14, w: FontWeight.w500, color: fg)),
-          ]),
+          child: Row(
+              mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 16, color: fg),
+                  const SizedBox(width: 8)
+                ],
+                Text(label, style: ts(14, w: FontWeight.w500, color: fg)),
+              ]),
         ),
       ),
     );
@@ -41,18 +52,26 @@ class DeskPage extends StatelessWidget {
   final String sub;
   final List<Widget> actions;
   final List<Widget> children;
-  const DeskPage({super.key, required this.title, required this.sub, this.actions = const [], required this.children});
+  const DeskPage(
+      {super.key,
+      required this.title,
+      required this.sub,
+      this.actions = const [],
+      required this.children});
   @override
   Widget build(BuildContext context) => SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(32, 28, 32, 32),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(title, style: ts(24, w: FontWeight.w600)),
-                const SizedBox(height: 4),
-                Text(sub, style: ts(13, color: C.muted)),
-              ]),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: ts(24, w: FontWeight.w600)),
+                    const SizedBox(height: 4),
+                    Text(sub, style: ts(13, color: C.muted)),
+                  ]),
             ),
             Wrap(spacing: 10, children: actions),
           ]),
@@ -68,16 +87,20 @@ class DeskRow {
   const DeskRow(this.cells, {this.bg});
 }
 
-Widget cellText(String s, {Color? c, bool bold = false}) =>
-    Text(s, style: ts(13, w: bold ? FontWeight.w500 : FontWeight.w400, color: c ?? C.ink));
+Widget cellText(String s, {Color? c, bool bold = false}) => Text(s,
+    style:
+        ts(13, w: bold ? FontWeight.w500 : FontWeight.w400, color: c ?? C.ink));
 
 class DeskTable extends StatelessWidget {
   final List<String> heads;
   final List<int> flex;
   final List<DeskRow> rows;
-  const DeskTable({super.key, required this.heads, required this.flex, required this.rows});
+  const DeskTable(
+      {super.key, required this.heads, required this.flex, required this.rows});
 
-  Widget _row(List<Widget> cells, {Color? bg, bool head = false, bool last = false}) => Container(
+  Widget _row(List<Widget> cells,
+          {Color? bg, bool head = false, bool last = false}) =>
+      Container(
         height: head ? 40 : 48,
         decoration: BoxDecoration(
           color: bg ?? (head ? C.surface : C.bg),
@@ -97,11 +120,15 @@ class DeskTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(border: Border.all(color: C.line), borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+            border: Border.all(color: C.line),
+            borderRadius: BorderRadius.circular(12)),
         clipBehavior: Clip.antiAlias,
         child: Column(children: [
-          _row([for (final h in heads) Text(h, style: ts(13, color: C.muted))], head: true),
-          for (var i = 0; i < rows.length; i++) _row(rows[i].cells, bg: rows[i].bg, last: i == rows.length - 1),
+          _row([for (final h in heads) Text(h, style: ts(13, color: C.muted))],
+              head: true),
+          for (var i = 0; i < rows.length; i++)
+            _row(rows[i].cells, bg: rows[i].bg, last: i == rows.length - 1),
         ]),
       );
 }
@@ -126,11 +153,18 @@ InputDecoration searchDec() => InputDecoration(
       hintStyle: ts(14, color: C.hint),
       prefixIcon: Icon(Icons.search, size: 16, color: C.muted),
       contentPadding: const EdgeInsets.symmetric(vertical: 12),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: C.line)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: C.blue)),
+      enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: C.line)),
+      focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: C.blue)),
     );
 
-BoxDecoration cardDeco() => BoxDecoration(color: C.bg, border: Border.all(color: C.line), borderRadius: BorderRadius.circular(12));
+BoxDecoration cardDeco() => BoxDecoration(
+    color: C.bg,
+    border: Border.all(color: C.line),
+    borderRadius: BorderRadius.circular(12));
 
 // ---------- login ----------
 
@@ -140,9 +174,14 @@ class DesktopLogin extends StatelessWidget {
   InputDecoration _dec(String h) => InputDecoration(
         hintText: h,
         hintStyle: ts(14, color: C.hint),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: C.line)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: C.blue)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: C.line)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: C.blue)),
       );
 
   @override
@@ -151,49 +190,70 @@ class DesktopLogin extends StatelessWidget {
         body: Stack(children: [
           const Positioned(top: 8, right: 8, child: ThemeIconButton()),
           Center(
-          child: SingleChildScrollView(
-            child: Container(
-              width: 440,
-              padding: const EdgeInsets.all(36),
-              decoration: BoxDecoration(color: C.bg, border: Border.all(color: C.line), borderRadius: BorderRadius.circular(16)),
-              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                Center(
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(color: C.blueBg, borderRadius: BorderRadius.circular(14)),
-                    child: Icon(Icons.qr_code_2, size: 32, color: C.blue),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Center(child: Text('EduSync admin', style: ts(22, w: FontWeight.w600))),
-                const SizedBox(height: 14),
-                Center(child: Text('Sign in to monitor teacher attendance', style: ts(13, color: C.muted))),
-                const SizedBox(height: 14),
-                TextField(decoration: _dec('name@school.edu.my')),
-                const SizedBox(height: 14),
-                TextField(obscureText: true, decoration: _dec('Password')),
-                const SizedBox(height: 14),
-                DeskButton('Sign in',
-                    primary: true,
-                    fill: true,
-                    onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const DesktopShell()))),
-                const SizedBox(height: 14),
-                Center(child: Text('Only authorised school staff can sign in.', style: ts(12, color: C.hint))),
-                const SizedBox(height: 6),
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      phoneMode.value = true;
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                    },
-                    child: Text('Teacher? Open the phone view', style: ts(13, w: FontWeight.w500, color: C.blue)),
-                  ),
-                ),
-              ]),
+            child: SingleChildScrollView(
+              child: Container(
+                width: 440,
+                padding: const EdgeInsets.all(36),
+                decoration: BoxDecoration(
+                    color: C.bg,
+                    border: Border.all(color: C.line),
+                    borderRadius: BorderRadius.circular(16)),
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                              color: C.blueBg,
+                              borderRadius: BorderRadius.circular(14)),
+                          child: Icon(Icons.qr_code_2, size: 32, color: C.blue),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Center(
+                          child: Text('EduSync admin',
+                              style: ts(22, w: FontWeight.w600))),
+                      const SizedBox(height: 14),
+                      Center(
+                          child: Text('Sign in to monitor teacher attendance',
+                              style: ts(13, color: C.muted))),
+                      const SizedBox(height: 14),
+                      TextField(decoration: _dec('name@school.edu.my')),
+                      const SizedBox(height: 14),
+                      TextField(
+                          obscureText: true, decoration: _dec('Password')),
+                      const SizedBox(height: 14),
+                      DeskButton('Sign in',
+                          primary: true,
+                          fill: true,
+                          onTap: () => Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (_) => const DesktopShell()))),
+                      const SizedBox(height: 14),
+                      Center(
+                          child: Text(
+                              'Only authorised school staff can sign in.',
+                              style: ts(12, color: C.hint))),
+                      const SizedBox(height: 6),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            phoneMode.value = true;
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (_) => const LoginScreen()));
+                          },
+                          child: Text('Teacher? Open the phone view',
+                              style: ts(13, w: FontWeight.w500, color: C.blue)),
+                        ),
+                      ),
+                    ]),
+              ),
             ),
           ),
-        ),
         ]),
       );
 }
@@ -224,7 +284,10 @@ class _DesktopShellState extends State<DesktopShell> {
             child: Row(children: [
               Icon(icon, size: 18, color: sel ? C.blue : C.muted),
               const SizedBox(width: 10),
-              Text(label, style: ts(14, w: sel ? FontWeight.w500 : FontWeight.w400, color: sel ? C.blue : C.muted)),
+              Text(label,
+                  style: ts(14,
+                      w: sel ? FontWeight.w500 : FontWeight.w400,
+                      color: sel ? C.blue : C.muted)),
             ]),
           ),
         ),
@@ -234,16 +297,19 @@ class _DesktopShellState extends State<DesktopShell> {
 
   Widget _sidebar() => Container(
         width: 240,
-        decoration: BoxDecoration(color: C.surface, border: Border(right: BorderSide(color: C.line))),
+        decoration: BoxDecoration(
+            color: C.surface, border: Border(right: BorderSide(color: C.line))),
         padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(4, 4, 0, 24),
             child: Row(children: [
               Container(
                 width: 34,
                 height: 34,
-                decoration: BoxDecoration(color: C.blueBg, borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(
+                    color: C.blueBg, borderRadius: BorderRadius.circular(8)),
                 child: Icon(Icons.qr_code_2, size: 20, color: C.blue),
               ),
               const SizedBox(width: 10),
@@ -255,34 +321,49 @@ class _DesktopShellState extends State<DesktopShell> {
           _nav(2, Icons.auto_awesome, 'AI summary'),
           _nav(3, Icons.group_outlined, 'Teachers'),
           const Spacer(),
-          const Align(alignment: Alignment.centerLeft, child: ThemeIconButton()),
+          const Align(
+              alignment: Alignment.centerLeft, child: ThemeIconButton()),
           PopupMenuButton<String>(
             tooltip: '',
             onSelected: (v) {
               if (v == 'qr') {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const StationScreen()));
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const StationScreen()));
               } else {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const LoginScreen()), (r) => false);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (r) => false);
               }
             },
             itemBuilder: (_) => [
-              PopupMenuItem(value: 'qr', child: Text('QR station display', style: ts(14))),
-              PopupMenuItem(value: 'out', child: Text('Sign out', style: ts(14))),
+              PopupMenuItem(
+                  value: 'qr',
+                  child: Text('QR station display', style: ts(14))),
+              PopupMenuItem(
+                  value: 'out', child: Text('Sign out', style: ts(14))),
             ],
             child: Row(children: [
               Container(
                 width: 36,
                 height: 36,
                 alignment: Alignment.center,
-                decoration: BoxDecoration(color: C.blueBg, shape: BoxShape.circle),
-                child: Text('SA', style: ts(12, w: FontWeight.w500, color: C.blue)),
+                decoration:
+                    BoxDecoration(color: C.blueBg, shape: BoxShape.circle),
+                child: Text('SA',
+                    style: ts(12, w: FontWeight.w500, color: C.blue)),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('School administrator', style: ts(13, w: FontWeight.w500), overflow: TextOverflow.ellipsis),
-                  Text('Sekolah Kebangsaan Paya Mebi', style: ts(10, color: C.muted), overflow: TextOverflow.ellipsis),
-                ]),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('School administrator',
+                          style: ts(13, w: FontWeight.w500),
+                          overflow: TextOverflow.ellipsis),
+                      Text('Sekolah Kebangsaan Paya Mebi',
+                          style: ts(10, color: C.muted),
+                          overflow: TextOverflow.ellipsis),
+                    ]),
               ),
             ]),
           ),
@@ -338,44 +419,73 @@ class _DeskDashboardState extends State<DeskDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final rows = data.where((a) => a.name.toLowerCase().contains(q.toLowerCase())).toList();
+    final rows = data
+        .where((a) => a.name.toLowerCase().contains(q.toLowerCase()))
+        .toList();
     return DeskPage(
       title: "Today's attendance",
       sub: 'Monday, 12 October 2026 - updates live',
-      actions: [DeskButton('Export PDF', icon: Icons.download, onTap: widget.onExport)],
+      actions: [
+        DeskButton('Export PDF', icon: Icons.download, onTap: widget.onExport)
+      ],
       children: [
         const Row(children: [
           Expanded(child: _BigStat('Present', '38')),
           SizedBox(width: 16),
           Expanded(child: _BigStat('Late (after 6:50 AM)', '4', danger: true)),
           SizedBox(width: 16),
-          Expanded(child: _BigStat('Left early (before 12:50 PM)', '1', danger: true)),
+          Expanded(
+              child:
+                  _BigStat('Left early (before 12:50 PM)', '1', danger: true)),
           SizedBox(width: 16),
           Expanded(child: _BigStat('Absent', '2')),
         ]),
         Row(children: [
-          SizedBox(width: 320, child: TextField(onChanged: (s) => setState(() => q = s), decoration: searchDec())),
+          SizedBox(
+              width: 320,
+              child: TextField(
+                  onChanged: (s) => setState(() => q = s),
+                  decoration: searchDec())),
           const SizedBox(width: 12),
-          SizedBox(width: 130, child: PickerField(value: day, options: const ['Today', 'Yesterday'], onChanged: (s) {
-            setState(() => day = s);
-            if (s != 'Today') toast(context, 'Sample data is only available for today');
-          })),
+          SizedBox(
+              width: 130,
+              child: PickerField(
+                  value: day,
+                  options: const ['Today', 'Yesterday'],
+                  onChanged: (s) {
+                    setState(() => day = s);
+                    if (s != 'Today')
+                      toast(context, 'Sample data is only available for today');
+                  })),
         ]),
         DeskTable(
-          heads: const ['Teacher', 'Check-in', 'Check-out', 'Location', 'Status'],
+          heads: const [
+            'Teacher',
+            'Check-in',
+            'Check-out',
+            'Location',
+            'Status'
+          ],
           flex: const [28, 16, 16, 24, 28],
           rows: [
             for (final a in rows)
               DeskRow([
                 cellText(a.name),
-                cellText(a.inT, c: a.status == 'Late' || a.status == 'Left early' ? C.red : C.ink),
+                cellText(a.inT,
+                    c: a.status == 'Late' || a.status == 'Left early'
+                        ? C.red
+                        : C.ink),
                 cellText(a.outT),
                 cellText(a.loc),
                 statusPill(a.status),
-              ], bg: a.status == 'Late' || a.status == 'Left early' ? C.redBg : null),
+              ],
+                  bg: a.status == 'Late' || a.status == 'Left early'
+                      ? C.redBg
+                      : null),
           ],
         ),
-        Text('Red marks a late arrival (after 6:50 AM) or an early departure (before 12:50 PM). Sample data.',
+        Text(
+            'Red marks a late arrival (after 6:50 AM) or an early departure (before 12:50 PM). Sample data.',
             style: ts(12, color: C.hint)),
       ],
     );
@@ -389,11 +499,14 @@ class _BigStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
-        decoration: BoxDecoration(color: danger ? C.redBg : C.surface, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+            color: danger ? C.redBg : C.surface,
+            borderRadius: BorderRadius.circular(12)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label, style: ts(13, color: danger ? C.red : C.muted)),
           const SizedBox(height: 6),
-          Text(value, style: ts(32, w: FontWeight.w600, color: danger ? C.red : C.ink)),
+          Text(value,
+              style: ts(32, w: FontWeight.w600, color: danger ? C.red : C.ink)),
         ]),
       );
 }
@@ -425,27 +538,37 @@ class _DeskReportsState extends State<DeskReports> {
 
   @override
   Widget build(BuildContext context) {
-    final rows = sample.where((r) => teacher == 'All teachers' || r[0] == teacher).toList();
+    final rows = sample
+        .where((r) => teacher == 'All teachers' || r[0] == teacher)
+        .toList();
     return DeskPage(
       title: 'Attendance reports',
-      sub: 'Generate a record that auditors and education officers can read later',
+      sub:
+          'Generate a record that auditors and education officers can read later',
       children: [
         if (ready)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(color: C.greenBg, borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+                color: C.greenBg, borderRadius: BorderRadius.circular(12)),
             child: Row(children: [
               Icon(Icons.check, size: 18, color: C.green),
               const SizedBox(width: 10),
               Expanded(
-                child: Text('Report ready: Attendance_Oct2026.pdf (A4, 2 pages: monthly summary and daily log)',
+                child: Text(
+                    'Report ready: Attendance_Oct2026.pdf (A4, 2 pages: monthly summary and daily log)',
                     style: ts(13, color: C.green)),
               ),
-              DeskButton('Open PDF', onTap: () => toast(context, 'Opening Attendance_Oct2026.pdf')),
+              DeskButton('Open PDF',
+                  onTap: () =>
+                      toast(context, 'Opening Attendance_Oct2026.pdf')),
               const SizedBox(width: 12),
-              DeskButton('Print', icon: Icons.print_outlined, onTap: () => toast(context, 'Sending to printer...')),
+              DeskButton('Print',
+                  icon: Icons.print_outlined,
+                  onTap: () => toast(context, 'Sending to printer...')),
               const SizedBox(width: 12),
-              DeskButton('Share', onTap: () => toast(context, 'Share sheet would open here')),
+              DeskButton('Share',
+                  onTap: () => toast(context, 'Share sheet would open here')),
             ]),
           ),
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -453,55 +576,89 @@ class _DeskReportsState extends State<DeskReports> {
             width: 320,
             padding: const EdgeInsets.all(20),
             decoration: cardDeco(),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              Text('Report options', style: ts(14, w: FontWeight.w500)),
-              const SizedBox(height: 14),
-              _lbl('Date range'),
-              PickerField(value: range, options: const ['1 Oct - 31 Oct 2026', '1 Sep - 30 Sep 2026'], onChanged: (v) => setState(() => range = v)),
-              const SizedBox(height: 14),
-              _lbl('Teacher'),
-              PickerField(
-                  value: teacher,
-                  options: const ['All teachers', 'Cikgu Aina', 'Cikgu Hafiz', 'Cikgu Mei Ling', 'Cikgu Daud', 'Cikgu Siti', 'Cikgu Ramli'],
-                  onChanged: (v) => setState(() => teacher = v)),
-              const SizedBox(height: 14),
-              _lbl('Report type'),
-              PickerField(
-                  value: type,
-                  options: const ['Monthly summary + daily log', 'Monthly summary only'],
-                  onChanged: (v) => setState(() => type = v)),
-              const SizedBox(height: 56),
-              DeskButton('Export PDF', icon: Icons.download, primary: true, fill: true, onTap: _export),
-              const SizedBox(height: 10),
-              DeskButton('Print', icon: Icons.print_outlined, fill: true, onTap: () => toast(context, 'Sending to printer...')),
-            ]),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text('Report options', style: ts(14, w: FontWeight.w500)),
+                  const SizedBox(height: 14),
+                  _lbl('Date range'),
+                  PickerField(
+                      value: range,
+                      options: const [
+                        '1 Oct - 31 Oct 2026',
+                        '1 Sep - 30 Sep 2026'
+                      ],
+                      onChanged: (v) => setState(() => range = v)),
+                  const SizedBox(height: 14),
+                  _lbl('Teacher'),
+                  PickerField(
+                      value: teacher,
+                      options: const [
+                        'All teachers',
+                        'Cikgu Aina',
+                        'Cikgu Hafiz',
+                        'Cikgu Mei Ling',
+                        'Cikgu Daud',
+                        'Cikgu Siti',
+                        'Cikgu Ramli'
+                      ],
+                      onChanged: (v) => setState(() => teacher = v)),
+                  const SizedBox(height: 14),
+                  _lbl('Report type'),
+                  PickerField(
+                      value: type,
+                      options: const [
+                        'Monthly summary + daily log',
+                        'Monthly summary only'
+                      ],
+                      onChanged: (v) => setState(() => type = v)),
+                  const SizedBox(height: 56),
+                  DeskButton('Export PDF',
+                      icon: Icons.download,
+                      primary: true,
+                      fill: true,
+                      onTap: _export),
+                  const SizedBox(height: 10),
+                  DeskButton('Print',
+                      icon: Icons.print_outlined,
+                      fill: true,
+                      onTap: () => toast(context, 'Sending to printer...')),
+                ]),
           ),
           const SizedBox(width: 20),
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(25),
               decoration: cardDeco(),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('Preview: monthly summary, $range', style: ts(14, w: FontWeight.w500)),
-                const SizedBox(height: 14),
-                DeskTable(
-                  heads: const ['Teacher', 'Present', 'Late (after 6:50)', 'Left early (before 12:50)'],
-                  flex: const [26, 10, 17, 22],
-                  rows: [
-                    for (final r in rows)
-                      DeskRow([
-                        cellText(r[0]),
-                        cellText(r[1]),
-                        cellText(r[2], c: r[2] != '0' ? C.red : C.ink),
-                        cellText(r[3], c: r[3] != '0' ? C.red : C.ink),
-                      ]),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Text(
-                    'Sample data: ${rows.length} of 42 teachers shown. The PDF includes all teachers, a daily log, and signature lines for the administrator and principal.',
-                    style: ts(12, color: C.hint)),
-              ]),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Preview: monthly summary, $range',
+                        style: ts(14, w: FontWeight.w500)),
+                    const SizedBox(height: 14),
+                    DeskTable(
+                      heads: const [
+                        'Teacher',
+                        'Present',
+                        'Late (after 6:50)',
+                        'Left early (before 12:50)'
+                      ],
+                      flex: const [26, 10, 17, 22],
+                      rows: [
+                        for (final r in rows)
+                          DeskRow([
+                            cellText(r[0]),
+                            cellText(r[1]),
+                            cellText(r[2], c: r[2] != '0' ? C.red : C.ink),
+                            cellText(r[3], c: r[3] != '0' ? C.red : C.ink),
+                          ]),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                        'Sample data: ${rows.length} of 42 teachers shown. The PDF includes all teachers, a daily log, and signature lines for the administrator and principal.',
+                        style: ts(12, color: C.hint)),
+                  ]),
             ),
           ),
         ]),
@@ -509,7 +666,9 @@ class _DeskReportsState extends State<DeskReports> {
     );
   }
 
-  Widget _lbl(String t) => Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(t, style: ts(12, color: C.muted)));
+  Widget _lbl(String t) => Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(t, style: ts(12, color: C.muted)));
 }
 
 // ---------- D4 AI summary ----------
@@ -531,7 +690,8 @@ class _DeskAiState extends State<DeskAi> {
     toast(context, 'Summary regenerated');
   }
 
-  Widget _bullet(String t) => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  Widget _bullet(String t) =>
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Icon(Icons.show_chart, size: 18, color: C.blue),
         const SizedBox(width: 10),
         Expanded(child: Text(t, style: ts(14))),
@@ -544,7 +704,8 @@ class _DeskAiState extends State<DeskAi> {
           Container(
             height: v * 28.0,
             margin: const EdgeInsets.symmetric(horizontal: 17),
-            decoration: BoxDecoration(color: C.blue, borderRadius: BorderRadius.circular(6)),
+            decoration: BoxDecoration(
+                color: C.blue, borderRadius: BorderRadius.circular(6)),
           ),
           const SizedBox(height: 8),
           Text(day, style: ts(13, color: C.muted)),
@@ -556,8 +717,13 @@ class _DeskAiState extends State<DeskAi> {
         title: 'AI attendance summary',
         sub: 'October 2026 - 42 teachers',
         actions: [
-          DeskButton('Regenerate summary', icon: Icons.auto_awesome, primary: true, onTap: loading ? null : _regen),
-          DeskButton('Export PDF', icon: Icons.download, onTap: () => toast(context, 'AI_Summary_Oct2026.pdf saved')),
+          DeskButton('Regenerate summary',
+              icon: Icons.auto_awesome,
+              primary: true,
+              onTap: loading ? null : _regen),
+          DeskButton('Export PDF',
+              icon: Icons.download,
+              onTap: () => toast(context, 'AI_Summary_Oct2026.pdf saved')),
         ],
         children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -566,23 +732,33 @@ class _DeskAiState extends State<DeskAi> {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: cardDeco(),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  Text('Key insights', style: ts(15, w: FontWeight.w500)),
-                  const SizedBox(height: 16),
-                  if (loading)
-                    const Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()))
-                  else
-                    ...gap([
-                      _bullet('Late arrivals rose from 9 to 17 this month, mostly on Mondays.'),
-                      _bullet('6 early departures, 4 of them on Fridays before 12:50 PM.'),
-                      _bullet('One teacher accounts for 5 of the late arrivals. The rest of the staff were mostly on time.'),
-                    ], 14),
-                  const SizedBox(height: 18),
-                  NoteBox(Icons.lock_outline, 'Names are replaced with codes before data is sent to the AI service.', fg: C.green, bg: C.greenBg),
-                  const SizedBox(height: 14),
-                  NoteBox(Icons.error_outline, 'If the AI service is unavailable, the report shows the plain totals table instead.',
-                      fg: C.amber, bg: C.amberBg),
-                ]),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text('Key insights', style: ts(15, w: FontWeight.w500)),
+                      const SizedBox(height: 16),
+                      if (loading)
+                        const Padding(
+                            padding: EdgeInsets.all(32),
+                            child: Center(child: CircularProgressIndicator()))
+                      else
+                        ...gap([
+                          _bullet(
+                              'Late arrivals rose from 9 to 17 this month, mostly on Mondays.'),
+                          _bullet(
+                              '6 early departures, 4 of them on Fridays before 12:50 PM.'),
+                          _bullet(
+                              'One teacher accounts for 5 of the late arrivals. The rest of the staff were mostly on time.'),
+                        ], 14),
+                      const SizedBox(height: 18),
+                      NoteBox(Icons.lock_outline,
+                          'Names are replaced with codes before data is sent to the AI service.',
+                          fg: C.green, bg: C.greenBg),
+                      const SizedBox(height: 14),
+                      NoteBox(Icons.error_outline,
+                          'If the AI service is unavailable, the report shows the plain totals table instead.',
+                          fg: C.amber, bg: C.amberBg),
+                    ]),
               ),
             ),
             const SizedBox(width: 20),
@@ -591,22 +767,28 @@ class _DeskAiState extends State<DeskAi> {
               child: Container(
                 padding: const EdgeInsets.all(25),
                 decoration: cardDeco(),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('Late arrivals by weekday (October)', style: ts(14, w: FontWeight.w500)),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    height: 260,
-                    child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                      _bar('Mon', 7),
-                      _bar('Tue', 3),
-                      _bar('Wed', 2),
-                      _bar('Thu', 2),
-                      _bar('Fri', 3),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Late arrivals by weekday (October)',
+                          style: ts(14, w: FontWeight.w500)),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 260,
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              _bar('Mon', 7),
+                              _bar('Tue', 3),
+                              _bar('Wed', 2),
+                              _bar('Thu', 2),
+                              _bar('Fri', 3),
+                            ]),
+                      ),
+                      const SizedBox(height: 14),
+                      Text('Sample data. Totals: 17 late arrivals.',
+                          style: ts(12, color: C.hint)),
                     ]),
-                  ),
-                  const SizedBox(height: 14),
-                  Text('Sample data. Totals: 17 late arrivals.', style: ts(12, color: C.hint)),
-                ]),
               ),
             ),
           ]),
@@ -645,18 +827,26 @@ class _DeskTeachersState extends State<DeskTeachers> {
 
   int get invited => list.where((t) => t.status == 'Invited').length;
 
-  String _email(String name) => '${name.replaceFirst('Cikgu ', '').toLowerCase().replaceAll(' ', '')}@school.edu.my';
+  String _email(String name) =>
+      '${name.replaceFirst('Cikgu ', '').toLowerCase().replaceAll(' ', '')}@school.edu.my';
 
   Future<void> _addOrEdit([_Teacher? t]) async {
     final c = TextEditingController(text: t?.name ?? '');
     final res = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(t == null ? 'Add teacher' : 'Edit teacher', style: ts(18, w: FontWeight.w600)),
-        content: TextField(controller: c, autofocus: true, decoration: const InputDecoration(hintText: 'Teacher name')),
+        title: Text(t == null ? 'Add teacher' : 'Edit teacher',
+            style: ts(18, w: FontWeight.w600)),
+        content: TextField(
+            controller: c,
+            autofocus: true,
+            decoration: const InputDecoration(hintText: 'Teacher name')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(ctx, c.text.trim()), child: Text(t == null ? 'Send invite' : 'Save')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, c.text.trim()),
+              child: Text(t == null ? 'Send invite' : 'Save')),
         ],
       ),
     );
@@ -674,20 +864,38 @@ class _DeskTeachersState extends State<DeskTeachers> {
 
   @override
   Widget build(BuildContext context) {
-    final rows = list.where((t) => t.name.toLowerCase().contains(q.toLowerCase())).toList();
+    final rows = list
+        .where((t) => t.name.toLowerCase().contains(q.toLowerCase()))
+        .toList();
     return DeskPage(
       title: 'Teachers',
       sub: '42 active - $invited invited',
-      actions: [DeskButton('Add teacher', icon: Icons.add, primary: true, onTap: () => _addOrEdit())],
+      actions: [
+        DeskButton('Add teacher',
+            icon: Icons.add, primary: true, onTap: () => _addOrEdit())
+      ],
       children: [
-        NoteBox(Icons.error_outline, '$invited teachers have not finished setup. Send a reminder.',
-            fg: C.amber, bg: C.amberBg, onTap: () => toast(context, 'Reminder sent to $invited teachers')),
+        NoteBox(Icons.error_outline,
+            '$invited teachers have not finished setup. Send a reminder.',
+            fg: C.amber,
+            bg: C.amberBg,
+            onTap: () => toast(context, 'Reminder sent to $invited teachers')),
         Align(
           alignment: Alignment.centerLeft,
-          child: SizedBox(width: 320, child: TextField(onChanged: (s) => setState(() => q = s), decoration: searchDec())),
+          child: SizedBox(
+              width: 320,
+              child: TextField(
+                  onChanged: (s) => setState(() => q = s),
+                  decoration: searchDec())),
         ),
         DeskTable(
-          heads: const ['Teacher', 'School email', 'Status', 'Last scan today', 'Actions'],
+          heads: const [
+            'Teacher',
+            'School email',
+            'Status',
+            'Last scan today',
+            'Actions'
+          ],
           flex: const [28, 32, 16, 20, 18],
           rows: [
             for (final t in rows)
@@ -697,8 +905,11 @@ class _DeskTeachersState extends State<DeskTeachers> {
                 statusPill(t.status),
                 cellText(t.last),
                 InkWell(
-                  onTap: () => t.status == 'Invited' ? toast(context, 'Reminder sent to ${t.name}') : _addOrEdit(t),
-                  child: Text(t.status == 'Invited' ? 'Send reminder' : 'Edit', style: ts(13, w: FontWeight.w500, color: C.blue)),
+                  onTap: () => t.status == 'Invited'
+                      ? toast(context, 'Reminder sent to ${t.name}')
+                      : _addOrEdit(t),
+                  child: Text(t.status == 'Invited' ? 'Send reminder' : 'Edit',
+                      style: ts(13, w: FontWeight.w500, color: C.blue)),
                 ),
               ]),
           ],

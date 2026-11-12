@@ -3,7 +3,8 @@ import 'package:edusync/main.dart'; // Ensure this matches your pubspec.yaml pac
 
 void main() {
   testWidgets('EduSync app smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(const EduSyncApp()); // <-- Replace with the exact class name from main.dart
+    await tester.pumpWidget(
+        const EduSyncApp()); // <-- Replace with the exact class name from main.dart
     expect(find.byType(EduSyncApp), findsOneWidget); // <-- Same class name here
   });
 }

@@ -14,7 +14,11 @@ class _AdminShellState extends State<AdminShell> {
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
           bottom: false,
-          child: IndexedStack(index: i, children: const [AdminDashboard(), AdminReports(), AdminTeachers()]),
+          child: IndexedStack(index: i, children: const [
+            AdminDashboard(),
+            AdminReports(),
+            AdminTeachers()
+          ]),
         ),
         bottomNavigationBar: BottomNav(
           index: i,
@@ -33,8 +37,10 @@ class AdminDashboard extends StatelessWidget {
 
   Widget _violation(String name, String what) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(color: C.redBg, borderRadius: BorderRadius.circular(8)),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        decoration: BoxDecoration(
+            color: C.redBg, borderRadius: BorderRadius.circular(8)),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(name, style: ts(13, color: C.red)),
           Text(what, style: ts(13, w: FontWeight.w500, color: C.red)),
         ]),
@@ -51,7 +57,8 @@ class AdminDashboard extends StatelessWidget {
             SizedBox(width: 8),
             Expanded(child: StatCard('Absent', '2')),
           ]),
-          Column(children: gap([
+          Column(
+              children: gap([
             _violation('Cikgu Hafiz', '7:05 AM - Late'),
             _violation('Cikgu Mei Ling', '6:58 AM - Late'),
             _violation('Cikgu Daud', '12:30 PM - Left early'),
@@ -61,13 +68,15 @@ class AdminDashboard extends StatelessWidget {
             LineRow('Cikgu Ramli', '6:35 AM', rightColor: C.green),
             LineRow('Cikgu Siti', '6:31 AM', rightColor: C.green),
           ]),
-          Text('Late is after 6:50 AM. Early leave is before 12:50 PM.', style: ts(12, color: C.hint)),
+          Text('Late is after 6:50 AM. Early leave is before 12:50 PM.',
+              style: ts(12, color: C.hint)),
           Text('Appearance', style: ts(13, w: FontWeight.w500, color: C.muted)),
           const ThemeChips(),
           AppButton('Sign out',
               outlined: true,
               onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()), (r) => false)),
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (r) => false)),
         ],
       );
 }
@@ -82,8 +91,19 @@ class _AdminReportsState extends State<AdminReports> {
   String range = '1 Oct - 31 Oct 2026';
   String teacher = 'All teachers';
 
-  static const ranges = ['1 Oct - 31 Oct 2026', '1 Sep - 30 Sep 2026', '1 Oct - 12 Oct 2026'];
-  static const teachers = ['All teachers', 'Cikgu Aina', 'Cikgu Hafiz', 'Cikgu Mei Ling', 'Cikgu Daud', 'Cikgu Farah'];
+  static const ranges = [
+    '1 Oct - 31 Oct 2026',
+    '1 Sep - 30 Sep 2026',
+    '1 Oct - 12 Oct 2026'
+  ];
+  static const teachers = [
+    'All teachers',
+    'Cikgu Aina',
+    'Cikgu Hafiz',
+    'Cikgu Mei Ling',
+    'Cikgu Daud',
+    'Cikgu Farah'
+  ];
   static const stats = {
     'All teachers': [42, 17, 6],
     'Cikgu Aina': [1, 0, 0],
@@ -93,12 +113,15 @@ class _AdminReportsState extends State<AdminReports> {
     'Cikgu Farah': [1, 1, 0],
   };
 
-  Widget _stat(String l, String v, {Color? c}) => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+  Widget _stat(String l, String v, {Color? c}) =>
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text(l, style: ts(13, color: C.muted)),
         Text(v, style: ts(13, w: FontWeight.w500, color: c ?? C.ink)),
       ]);
 
-  Widget _label(String t) => Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(t, style: ts(12, color: C.muted)));
+  Widget _label(String t) => Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(t, style: ts(12, color: C.muted)));
 
   @override
   Widget build(BuildContext context) {
@@ -107,23 +130,35 @@ class _AdminReportsState extends State<AdminReports> {
       footer: [
         AppButton('Export PDF',
             icon: Icons.download,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportReadyScreen()))),
-        AppButton('Print', icon: Icons.print_outlined, outlined: true, onTap: () => toast(context, 'Sending to printer...')),
+            onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ReportReadyScreen()))),
+        AppButton('Print',
+            icon: Icons.print_outlined,
+            outlined: true,
+            onTap: () => toast(context, 'Sending to printer...')),
       ],
       children: [
         Text('Attendance report', style: ts(20, w: FontWeight.w600)),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _label('Date range'),
-          PickerField(value: range, options: ranges, onChanged: (v) => setState(() => range = v)),
+          PickerField(
+              value: range,
+              options: ranges,
+              onChanged: (v) => setState(() => range = v)),
         ]),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _label('Teacher'),
-          PickerField(value: teacher, options: teachers, onChanged: (v) => setState(() => teacher = v)),
+          PickerField(
+              value: teacher,
+              options: teachers,
+              onChanged: (v) => setState(() => teacher = v)),
         ]),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(12)),
-          child: Column(children: gap([
+          decoration: BoxDecoration(
+              color: C.surface, borderRadius: BorderRadius.circular(12)),
+          child: Column(
+              children: gap([
             _stat('Teachers', '${s[0]}'),
             _stat('Total late', '${s[1]}', c: C.red),
             _stat('Total left early', '${s[2]}', c: C.red),
@@ -133,9 +168,11 @@ class _AdminReportsState extends State<AdminReports> {
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AiSummaryScreen())),
+            onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AiSummaryScreen())),
             icon: Icon(Icons.auto_awesome, size: 16, color: C.blue),
-            label: Text('View AI summary', style: ts(13, w: FontWeight.w500, color: C.blue)),
+            label: Text('View AI summary',
+                style: ts(13, w: FontWeight.w500, color: C.blue)),
           ),
         ),
       ],
@@ -160,7 +197,8 @@ class _AiSummaryScreenState extends State<AiSummaryScreen> {
     toast(context, 'Summary regenerated');
   }
 
-  Widget _bullet(String t) => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  Widget _bullet(String t) =>
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Icon(Icons.show_chart, size: 16, color: C.blue),
         const SizedBox(width: 8),
         Expanded(child: Text(t, style: ts(13))),
@@ -170,28 +208,43 @@ class _AiSummaryScreenState extends State<AiSummaryScreen> {
   Widget build(BuildContext context) => Screen(
         child: PageBody(
           footer: [
-            AppButton('Regenerate summary', icon: Icons.auto_awesome, onTap: loading ? null : _regen),
+            AppButton('Regenerate summary',
+                icon: Icons.auto_awesome, onTap: loading ? null : _regen),
             AppButton('Export PDF',
                 outlined: true,
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportReadyScreen()))),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => const ReportReadyScreen()))),
           ],
           children: [
             const BackHeader('Reports'),
             Heading('AI summary',
-                sub: 'October 2026 - 42 teachers', badge: Pill('AI', fg: C.blue, bg: C.blueBg)),
+                sub: 'October 2026 - 42 teachers',
+                badge: Pill('AI', fg: C.blue, bg: C.blueBg)),
             Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(
+                  color: C.surface, borderRadius: BorderRadius.circular(12)),
               child: loading
-                  ? const Center(child: Padding(padding: EdgeInsets.all(24), child: CircularProgressIndicator()))
-                  : Column(children: gap([
-                      _bullet('Late arrivals rose from 9 to 17 this month, mostly on Mondays.'),
-                      _bullet('6 early departures, 4 of them on Fridays before 12:50 PM.'),
-                      _bullet('One teacher accounts for 5 of the late arrivals. The rest of the staff were mostly on time.'),
+                  ? const Center(
+                      child: Padding(
+                          padding: EdgeInsets.all(24),
+                          child: CircularProgressIndicator()))
+                  : Column(
+                      children: gap([
+                      _bullet(
+                          'Late arrivals rose from 9 to 17 this month, mostly on Mondays.'),
+                      _bullet(
+                          '6 early departures, 4 of them on Fridays before 12:50 PM.'),
+                      _bullet(
+                          'One teacher accounts for 5 of the late arrivals. The rest of the staff were mostly on time.'),
                     ], 12)),
             ),
-            NoteBox(Icons.lock_outline, 'Names are replaced with codes before data is sent to the AI.', fg: C.green, bg: C.greenBg),
-            NoteBox(Icons.error_outline, 'If the AI is unavailable, the report shows the totals table instead.', fg: C.amber, bg: C.amberBg),
+            NoteBox(Icons.lock_outline,
+                'Names are replaced with codes before data is sent to the AI.',
+                fg: C.green, bg: C.greenBg),
+            NoteBox(Icons.error_outline,
+                'If the AI is unavailable, the report shows the totals table instead.',
+                fg: C.amber, bg: C.amberBg),
           ],
         ),
       );
@@ -203,9 +256,17 @@ class ReportReadyScreen extends StatelessWidget {
   Widget build(BuildContext context) => Screen(
         child: PageBody(
           footer: [
-            AppButton('Open PDF', icon: Icons.description_outlined, onTap: () => toast(context, 'Opening Attendance_Oct2026.pdf')),
-            AppButton('Print', icon: Icons.print_outlined, outlined: true, onTap: () => toast(context, 'Sending to printer...')),
-            AppButton('Share', icon: Icons.download, outlined: true, onTap: () => toast(context, 'Share sheet would open here')),
+            AppButton('Open PDF',
+                icon: Icons.description_outlined,
+                onTap: () => toast(context, 'Opening Attendance_Oct2026.pdf')),
+            AppButton('Print',
+                icon: Icons.print_outlined,
+                outlined: true,
+                onTap: () => toast(context, 'Sending to printer...')),
+            AppButton('Share',
+                icon: Icons.download,
+                outlined: true,
+                onTap: () => toast(context, 'Share sheet would open here')),
           ],
           children: [
             const BackHeader('Reports'),
@@ -214,28 +275,37 @@ class ReportReadyScreen extends StatelessWidget {
               child: Container(
                 width: 72,
                 height: 72,
-                decoration: BoxDecoration(color: C.greenBg, shape: BoxShape.circle),
+                decoration:
+                    BoxDecoration(color: C.greenBg, shape: BoxShape.circle),
                 child: Icon(Icons.check, size: 36, color: C.green),
               ),
             ),
-            Center(child: Text('Report ready', style: ts(20, w: FontWeight.w600))),
+            Center(
+                child: Text('Report ready', style: ts(20, w: FontWeight.w600))),
             Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(
+                  color: C.surface, borderRadius: BorderRadius.circular(12)),
               child: Row(children: [
                 Icon(Icons.description_outlined, size: 28, color: C.blue),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Attendance_Oct2026.pdf', style: ts(14, w: FontWeight.w500)),
-                    const SizedBox(height: 2),
-                    Text('A4, 2 pages: monthly summary and daily log', style: ts(12, color: C.muted)),
-                  ]),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Attendance_Oct2026.pdf',
+                            style: ts(14, w: FontWeight.w500)),
+                        const SizedBox(height: 2),
+                        Text('A4, 2 pages: monthly summary and daily log',
+                            style: ts(12, color: C.muted)),
+                      ]),
                 ),
               ]),
             ),
-            Text('Auditors and education office officers can read the PDF or the printed copy at any time.',
-                textAlign: TextAlign.center, style: ts(13, color: C.muted)),
+            Text(
+                'Auditors and education office officers can read the PDF or the printed copy at any time.',
+                textAlign: TextAlign.center,
+                style: ts(13, color: C.muted)),
           ],
         ),
       );
@@ -247,7 +317,9 @@ class _T {
   _T(this.name, this.active);
   String get initials {
     final p = name.replaceFirst('Cikgu ', '').split(' ');
-    return p.length > 1 ? (p[0][0] + p[1][0]).toUpperCase() : p[0].substring(0, p[0].length > 1 ? 2 : 1).toUpperCase();
+    return p.length > 1
+        ? (p[0][0] + p[1][0]).toUpperCase()
+        : p[0].substring(0, p[0].length > 1 ? 2 : 1).toUpperCase();
   }
 }
 
@@ -274,21 +346,27 @@ class _AdminTeachersState extends State<AdminTeachers> {
       context: context,
       isScrollControlled: true,
       builder: (ctx) => Padding(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + MediaQuery.of(ctx).viewInsets.bottom),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Text('Add teacher', style: ts(18, w: FontWeight.w600)),
-          const SizedBox(height: 12),
-          TextField(
-            controller: c,
-            autofocus: true,
-            decoration: InputDecoration(
-              hintText: 'Teacher name',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-          ),
-          const SizedBox(height: 12),
-          AppButton('Send invite', onTap: () => Navigator.pop(ctx, c.text.trim())),
-        ]),
+        padding: EdgeInsets.fromLTRB(
+            20, 20, 20, 20 + MediaQuery.of(ctx).viewInsets.bottom),
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Add teacher', style: ts(18, w: FontWeight.w600)),
+              const SizedBox(height: 12),
+              TextField(
+                controller: c,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'Teacher name',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              AppButton('Send invite',
+                  onTap: () => Navigator.pop(ctx, c.text.trim())),
+            ]),
       ),
     );
     if (name == null || name.isEmpty) return;
@@ -300,7 +378,9 @@ class _AdminTeachersState extends State<AdminTeachers> {
 
   @override
   Widget build(BuildContext context) {
-    final shown = list.where((t) => t.name.toLowerCase().contains(q.toLowerCase())).toList();
+    final shown = list
+        .where((t) => t.name.toLowerCase().contains(q.toLowerCase()))
+        .toList();
     final invited = 2 + added;
     return PageBody(
       footer: [AppButton('Add teacher', icon: Icons.add, onTap: _add)],
@@ -313,31 +393,43 @@ class _AdminTeachersState extends State<AdminTeachers> {
             hintStyle: ts(14, color: C.hint),
             prefixIcon: Icon(Icons.search, size: 16, color: C.muted),
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: C.line)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: C.blue)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: C.line)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: C.blue)),
           ),
         ),
         Column(children: [
           for (final t in shown)
             Container(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: C.line))),
+              decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: C.line))),
               child: Row(children: [
                 Container(
                   width: 40,
                   height: 40,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(color: C.blueBg, shape: BoxShape.circle),
-                  child: Text(t.initials, style: ts(12, w: FontWeight.w500, color: C.blue)),
+                  decoration:
+                      BoxDecoration(color: C.blueBg, shape: BoxShape.circle),
+                  child: Text(t.initials,
+                      style: ts(12, w: FontWeight.w500, color: C.blue)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(child: Text(t.name, style: ts(14))),
-                t.active ? Pill('Active', fg: C.green, bg: C.greenBg) : Pill('Invited', fg: C.amber, bg: C.amberBg),
+                t.active
+                    ? Pill('Active', fg: C.green, bg: C.greenBg)
+                    : Pill('Invited', fg: C.amber, bg: C.amberBg),
               ]),
             ),
         ]),
-        NoteBox(Icons.error_outline, '$invited teachers have not finished setup. Send a reminder.',
-            fg: C.amber, bg: C.amberBg, onTap: () => toast(context, 'Reminder sent to $invited teachers')),
+        NoteBox(Icons.error_outline,
+            '$invited teachers have not finished setup. Send a reminder.',
+            fg: C.amber,
+            bg: C.amberBg,
+            onTap: () => toast(context, 'Reminder sent to $invited teachers')),
       ],
     );
   }

@@ -46,10 +46,16 @@ class ResultScreen extends StatelessWidget {
                 child: Icon(icon, size: 36, color: fg),
               ),
             ),
-            Center(child: Text(title, textAlign: TextAlign.center, style: ts(20, w: FontWeight.w600))),
-            if (time != null) Center(child: Text(time!, style: ts(32, w: FontWeight.w600))),
-            if (badge != null) Center(child: Pill(badge!, fg: badgeFg!, bg: badgeBg!)),
-            Text(body, textAlign: TextAlign.center, style: ts(13, color: C.muted)),
+            Center(
+                child: Text(title,
+                    textAlign: TextAlign.center,
+                    style: ts(20, w: FontWeight.w600))),
+            if (time != null)
+              Center(child: Text(time!, style: ts(32, w: FontWeight.w600))),
+            if (badge != null)
+              Center(child: Pill(badge!, fg: badgeFg!, bg: badgeBg!)),
+            Text(body,
+                textAlign: TextAlign.center, style: ts(13, color: C.muted)),
           ],
         ),
       );
@@ -76,7 +82,8 @@ Widget expiredResult() => ResultScreen(
       fg: C.amber,
       bg: C.amberBg,
       title: 'This QR code has expired',
-      body: 'The code at the station refreshes regularly so it cannot be shared. Scan the code that is showing now.',
+      body:
+          'The code at the station refreshes regularly so it cannot be shared. Scan the code that is showing now.',
       button: 'Scan again',
       onTap: _back,
     );
@@ -86,7 +93,8 @@ Widget farResult() => ResultScreen(
       fg: C.red,
       bg: C.redBg,
       title: 'You are too far from the school',
-      body: 'Move closer to the attendance station and try again. Location is checked to stop attendance being recorded for someone else.',
+      body:
+          'Move closer to the attendance station and try again. Location is checked to stop attendance being recorded for someone else.',
       button: 'Try again',
       onTap: _back,
     );
@@ -100,7 +108,8 @@ Widget offlineResult(String time) => ResultScreen(
       badge: 'Pending sync',
       badgeFg: C.amber,
       badgeBg: C.amberBg,
-      body: 'No signal. Your scan will sync automatically when you are back online.',
+      body:
+          'No signal. Your scan will sync automatically when you are back online.',
       button: 'Done',
       onTap: _home,
     );
@@ -112,35 +121,49 @@ class ReminderNotificationScreen extends StatelessWidget {
         child: PageBody(children: [
           const BackHeader('Reminder'),
           const SizedBox(height: 8),
-          Center(child: Text('Monday, 12 October', style: ts(16, color: C.muted))),
+          Center(
+              child: Text('Monday, 12 October', style: ts(16, color: C.muted))),
           InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const ScanScreen(checkingOut: true)),
+              MaterialPageRoute(
+                  builder: (_) => const ScanScreen(checkingOut: true)),
             ),
             child: Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(16)),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Container(
-                    width: 22,
-                    height: 22,
-                    decoration: BoxDecoration(color: C.blueBg, borderRadius: BorderRadius.circular(6)),
-                    child: Icon(Icons.qr_code_2, size: 14, color: C.blue),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text('EduSync', style: ts(12, color: C.muted))),
-                  Text('now', style: ts(12, color: C.hint)),
-                ]),
-                const SizedBox(height: 8),
-                Text("You haven't scanned out yet", style: ts(14, w: FontWeight.w600)),
-                const SizedBox(height: 2),
-                Text('Scan the QR code at the admin office before you leave.', style: ts(13, color: C.muted)),
-              ]),
+              decoration: BoxDecoration(
+                  color: C.surface, borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                            color: C.blueBg,
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Icon(Icons.qr_code_2, size: 14, color: C.blue),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                          child:
+                              Text('EduSync', style: ts(12, color: C.muted))),
+                      Text('now', style: ts(12, color: C.hint)),
+                    ]),
+                    const SizedBox(height: 8),
+                    Text("You haven't scanned out yet",
+                        style: ts(14, w: FontWeight.w600)),
+                    const SizedBox(height: 2),
+                    Text(
+                        'Scan the QR code at the admin office before you leave.',
+                        style: ts(13, color: C.muted)),
+                  ]),
             ),
           ),
-          Center(child: Text('Tap the notification to open the scanner', style: ts(12, color: C.hint))),
+          Center(
+              child: Text('Tap the notification to open the scanner',
+                  style: ts(12, color: C.hint))),
         ]),
       );
 }

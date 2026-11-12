@@ -344,7 +344,7 @@ class _DeskDashboardState extends State<DeskDashboard> {
       sub: 'Monday, 12 October 2026 - updates live',
       actions: [DeskButton('Export PDF', icon: Icons.download, onTap: widget.onExport)],
       children: [
-        Row(children: const [
+        const Row(children: [
           Expanded(child: _BigStat('Present', '38')),
           SizedBox(width: 16),
           Expanded(child: _BigStat('Late (after 6:50 AM)', '4', danger: true)),
@@ -660,7 +660,6 @@ class _DeskTeachersState extends State<DeskTeachers> {
         ],
       ),
     );
-    c.dispose();
     if (res == null || res.isEmpty) return;
     final name = res.startsWith('Cikgu') ? res : 'Cikgu $res';
     setState(() {

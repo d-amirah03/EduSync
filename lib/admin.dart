@@ -44,7 +44,7 @@ class AdminDashboard extends StatelessWidget {
   Widget build(BuildContext context) => PageBody(
         children: [
           const Heading("Today's attendance", sub: 'Mon, 12 Oct - live'),
-          Row(children: const [
+          const Row(children: [
             Expanded(child: StatCard('Present', '38')),
             SizedBox(width: 8),
             Expanded(child: StatCard('Late', '4', danger: true)),
@@ -104,6 +104,12 @@ class _AdminReportsState extends State<AdminReports> {
   Widget build(BuildContext context) {
     final s = stats[teacher]!;
     return PageBody(
+      footer: [
+        AppButton('Export PDF',
+            icon: Icons.download,
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportReadyScreen()))),
+        AppButton('Print', icon: Icons.print_outlined, outlined: true, onTap: () => toast(context, 'Sending to printer...')),
+      ],
       children: [
         Text('Attendance report', style: ts(20, w: FontWeight.w600)),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -132,12 +138,6 @@ class _AdminReportsState extends State<AdminReports> {
             label: Text('View AI summary', style: ts(13, w: FontWeight.w500, color: C.blue)),
           ),
         ),
-      ],
-      footer: [
-        AppButton('Export PDF',
-            icon: Icons.download,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportReadyScreen()))),
-        AppButton('Print', icon: Icons.print_outlined, outlined: true, onTap: () => toast(context, 'Sending to printer...')),
       ],
     );
   }
@@ -169,6 +169,12 @@ class _AiSummaryScreenState extends State<AiSummaryScreen> {
   @override
   Widget build(BuildContext context) => Screen(
         child: PageBody(
+          footer: [
+            AppButton('Regenerate summary', icon: Icons.auto_awesome, onTap: loading ? null : _regen),
+            AppButton('Export PDF',
+                outlined: true,
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportReadyScreen()))),
+          ],
           children: [
             const BackHeader('Reports'),
             Heading('AI summary',
@@ -187,12 +193,6 @@ class _AiSummaryScreenState extends State<AiSummaryScreen> {
             NoteBox(Icons.lock_outline, 'Names are replaced with codes before data is sent to the AI.', fg: C.green, bg: C.greenBg),
             NoteBox(Icons.error_outline, 'If the AI is unavailable, the report shows the totals table instead.', fg: C.amber, bg: C.amberBg),
           ],
-          footer: [
-            AppButton('Regenerate summary', icon: Icons.auto_awesome, onTap: loading ? null : _regen),
-            AppButton('Export PDF',
-                outlined: true,
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportReadyScreen()))),
-          ],
         ),
       );
 }
@@ -202,6 +202,11 @@ class ReportReadyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Screen(
         child: PageBody(
+          footer: [
+            AppButton('Open PDF', icon: Icons.description_outlined, onTap: () => toast(context, 'Opening Attendance_Oct2026.pdf')),
+            AppButton('Print', icon: Icons.print_outlined, outlined: true, onTap: () => toast(context, 'Sending to printer...')),
+            AppButton('Share', icon: Icons.download, outlined: true, onTap: () => toast(context, 'Share sheet would open here')),
+          ],
           children: [
             const BackHeader('Reports'),
             const SizedBox(height: 24),
@@ -231,11 +236,6 @@ class ReportReadyScreen extends StatelessWidget {
             ),
             Text('Auditors and education office officers can read the PDF or the printed copy at any time.',
                 textAlign: TextAlign.center, style: ts(13, color: C.muted)),
-          ],
-          footer: [
-            AppButton('Open PDF', icon: Icons.description_outlined, onTap: () => toast(context, 'Opening Attendance_Oct2026.pdf')),
-            AppButton('Print', icon: Icons.print_outlined, outlined: true, onTap: () => toast(context, 'Sending to printer...')),
-            AppButton('Share', icon: Icons.download, outlined: true, onTap: () => toast(context, 'Share sheet would open here')),
           ],
         ),
       );
@@ -291,7 +291,6 @@ class _AdminTeachersState extends State<AdminTeachers> {
         ]),
       ),
     );
-    c.dispose();
     if (name == null || name.isEmpty) return;
     setState(() {
       list.add(_T(name.startsWith('Cikgu') ? name : 'Cikgu $name', false));
@@ -304,6 +303,7 @@ class _AdminTeachersState extends State<AdminTeachers> {
     final shown = list.where((t) => t.name.toLowerCase().contains(q.toLowerCase())).toList();
     final invited = 2 + added;
     return PageBody(
+      footer: [AppButton('Add teacher', icon: Icons.add, onTap: _add)],
       children: [
         Heading('Teachers', sub: '42 active - $invited invited'),
         TextField(
@@ -339,7 +339,6 @@ class _AdminTeachersState extends State<AdminTeachers> {
         NoteBox(Icons.error_outline, '$invited teachers have not finished setup. Send a reminder.',
             fg: C.amber, bg: C.amberBg, onTap: () => toast(context, 'Reminder sent to $invited teachers')),
       ],
-      footer: [AppButton('Add teacher', icon: Icons.add, onTap: _add)],
     );
   }
 }

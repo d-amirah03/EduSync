@@ -35,6 +35,7 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Screen(
         child: PageBody(
+          footer: [AppButton(button, onTap: () => onTap(context))],
           children: [
             const SizedBox(height: 40),
             Center(
@@ -50,7 +51,6 @@ class ResultScreen extends StatelessWidget {
             if (badge != null) Center(child: Pill(badge!, fg: badgeFg!, bg: badgeBg!)),
             Text(body, textAlign: TextAlign.center, style: ts(13, color: C.muted)),
           ],
-          footer: [AppButton(button, onTap: () => onTap(context))],
         ),
       );
 }
@@ -116,7 +116,7 @@ class ReminderNotificationScreen extends StatelessWidget {
           InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => ScanScreen(checkingOut: true)),
+              MaterialPageRoute(builder: (_) => const ScanScreen(checkingOut: true)),
             ),
             child: Container(
               padding: const EdgeInsets.all(14),

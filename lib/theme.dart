@@ -109,7 +109,7 @@ class BackHeader extends StatelessWidget {
   Widget build(BuildContext context) => Row(children: [
         InkWell(
           onTap: () => Navigator.of(context).pop(),
-          child: Padding(padding: EdgeInsets.all(4), child: Icon(Icons.arrow_back, size: 20, color: C.ink)),
+          child: Padding(padding: const EdgeInsets.all(4), child: Icon(Icons.arrow_back, size: 20, color: C.ink)),
         ),
         const SizedBox(width: 8),
         Text(title, style: ts(16, w: FontWeight.w500)),

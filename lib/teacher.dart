@@ -168,6 +168,9 @@ class _ScanScreenState extends State<ScanScreen> {
   @override
   Widget build(BuildContext context) => Screen(
         child: PageBody(
+          footer: [
+            if (done) AppButton('Done', onTap: () => Navigator.of(context).popUntil((r) => r.isFirst)),
+          ],
           children: [
             BackHeader(widget.checkingOut ? 'Scan QR code' : 'Scan QR code'),
             Container(
@@ -202,9 +205,6 @@ class _ScanScreenState extends State<ScanScreen> {
             NoteBox(Icons.error_outline, "No signal? Your scan is saved on this phone and syncs when you're back online.",
                 fg: C.amber, bg: C.amberBg),
           ],
-          footer: [
-            if (done) AppButton('Done', onTap: () => Navigator.of(context).popUntil((r) => r.isFirst)),
-          ],
         ),
       );
 }
@@ -222,12 +222,17 @@ class TeacherHistory extends StatelessWidget {
             if (app.isLate) todayColor = C.red;
           }
           return PageBody(
+            footer: [
+              AppButton('View monthly record',
+                  outlined: true,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyRecordScreen()))),
+            ],
             children: [
               Text('My attendance', style: ts(20, w: FontWeight.w600)),
               Row(children: [
                 Expanded(child: StatCard('Late this month', '${3 + (app.isLate ? 1 : 0)}', danger: true)),
                 const SizedBox(width: 10),
-                Expanded(child: StatCard('Left early', '1', danger: true)),
+                const Expanded(child: StatCard('Left early', '1', danger: true)),
               ]),
               Column(children: [
                 if (today != null) LineRow('Mon 12 Oct', today, rightColor: todayColor),
@@ -237,11 +242,6 @@ class TeacherHistory extends StatelessWidget {
                 const LineRow('Tue 6 Oct', '6:38 AM - 1:05 PM'),
               ]),
               Text('Red means late or left early', style: ts(12, color: C.redNote)),
-            ],
-            footer: [
-              AppButton('View monthly record',
-                  outlined: true,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyRecordScreen()))),
             ],
           );
         },
@@ -253,10 +253,14 @@ class MyRecordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Screen(
         child: PageBody(
+          footer: [
+            AppButton('Export PDF', icon: Icons.download, onTap: () => toast(context, 'Attendance_Oct2026.pdf saved')),
+            AppButton('Print', icon: Icons.print_outlined, outlined: true, onTap: () => toast(context, 'Sending to printer...')),
+          ],
           children: [
             const BackHeader('History'),
             const Heading('My record', sub: 'Cikgu Aina - 1 Oct to 31 Oct 2026'),
-            Row(children: const [
+            const Row(children: [
               Expanded(child: StatCard('Days present', '22')),
               SizedBox(width: 8),
               Expanded(child: StatCard('Late', '3', danger: true)),
@@ -272,10 +276,6 @@ class MyRecordScreen extends StatelessWidget {
             ]),
             Text('Export this record as a PDF to show an auditor or print it.', style: ts(12, color: C.hint)),
           ],
-          footer: [
-            AppButton('Export PDF', icon: Icons.download, onTap: () => toast(context, 'Attendance_Oct2026.pdf saved')),
-            AppButton('Print', icon: Icons.print_outlined, outlined: true, onTap: () => toast(context, 'Sending to printer...')),
-          ],
         ),
       );
 }
@@ -284,6 +284,11 @@ class TeacherProfile extends StatelessWidget {
   const TeacherProfile({super.key});
   @override
   Widget build(BuildContext context) => PageBody(
+        footer: [
+          AppButton('Sign out',
+              onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()), (r) => false)),
+        ],
         children: [
           const Heading('Profile', sub: 'Cikgu Zanibah - Teacher'),
           Center(
@@ -306,11 +311,6 @@ class TeacherProfile extends StatelessWidget {
             app.newDay();
             toast(context, 'New day: scan to check in');
           }),
-        ],
-        footer: [
-          AppButton('Sign out',
-              onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()), (r) => false)),
         ],
       );
 }

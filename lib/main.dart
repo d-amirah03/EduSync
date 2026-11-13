@@ -56,6 +56,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   String role = 'Teacher';
   final email = TextEditingController();
   final pass = TextEditingController();
@@ -99,10 +100,41 @@ class _LoginScreenState extends State<LoginScreen> {
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: C.blue)),
+        errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: C.red)),
+        focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: C.red)),
       );
+
+  String? _validateEmail(String? v) {
+    final value = v?.trim() ?? '';
+    if (value.isEmpty) {
+      return 'Please enter your school email';
+    }
+    final emailRegex = RegExp(r'^[\w.-]+@[\w.-]+\.\w{2,}$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Enter a valid email format (e.g. name@school.edu.my)';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? v) {
+    final value = v ?? '';
+    if (value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
+  }
 
   void _signIn() {
     FocusScope.of(context).unfocus();
+    if (!_formKey.currentState!.validate()) return;
+
     Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (_) =>
           role == 'Teacher' ? const TeacherShell() : const AdminShell(),
@@ -122,50 +154,55 @@ class _LoginScreenState extends State<LoginScreen> {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                            color: C.blueBg,
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Icon(Icons.qr_code_2, size: 34, color: C.blue),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                              color: C.blueBg,
+                              borderRadius: BorderRadius.circular(16)),
+                          child: Icon(Icons.qr_code_2, size: 34, color: C.blue),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                    Center(
-                        child:
-                            Text('EduSync', style: ts(24, w: FontWeight.w600))),
-                    const SizedBox(height: 14),
-                    Center(
-                        child: Text('"Smart Attendance, Smarter Management."',
-                            style: ts(13, color: C.muted))),
-                    const SizedBox(height: 14),
-                    Row(children: [
-                      _role('Teacher'),
-                      const SizedBox(width: 8),
-                      _role('Admin')
+                      const SizedBox(height: 14),
+                      Center(
+                          child: Text('EduSync',
+                              style: ts(24, w: FontWeight.w600))),
+                      const SizedBox(height: 14),
+                      Center(
+                          child: Text('"Smart Attendance, Smarter Management."',
+                              style: ts(13, color: C.muted))),
+                      const SizedBox(height: 14),
+                      Row(children: [
+                        _role('Teacher'),
+                        const SizedBox(width: 8),
+                        _role('Admin')
+                      ]),
+                      const SizedBox(height: 14),
+                      TextFormField(
+                          controller: email,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: _validateEmail,
+                          decoration: _dec('name@school.edu.my')),
+                      const SizedBox(height: 14),
+                      TextFormField(
+                          controller: pass,
+                          obscureText: true,
+                          validator: _validatePassword,
+                          decoration: _dec('Password')),
+                      const SizedBox(height: 14),
+                      AppButton('Sign in', onTap: _signIn),
+                      const SizedBox(height: 14),
+                      Center(
+                          child: Text('New here? Ask your admin to add you.',
+                              style: ts(12, color: C.hint))),
                     ]),
-                    const SizedBox(height: 14),
-                    TextField(
-                        controller: email,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: _dec('name@school.edu.my')),
-                    const SizedBox(height: 14),
-                    TextField(
-                        controller: pass,
-                        obscureText: true,
-                        decoration: _dec('Password')),
-                    const SizedBox(height: 14),
-                    AppButton('Sign in', onTap: _signIn),
-                    const SizedBox(height: 14),
-                    Center(
-                        child: Text('New here? Ask your admin to add you.',
-                            style: ts(12, color: C.hint))),
-                  ]),
+              ),
             ),
           ),
           ValueListenableBuilder<bool>(

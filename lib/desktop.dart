@@ -168,8 +168,23 @@ BoxDecoration cardDeco() => BoxDecoration(
 
 // ---------- login ----------
 
-class DesktopLogin extends StatelessWidget {
+class DesktopLogin extends StatefulWidget {
   const DesktopLogin({super.key});
+  @override
+  State<DesktopLogin> createState() => _DesktopLoginState();
+}
+
+class _DesktopLoginState extends State<DesktopLogin> {
+  final _formKey = GlobalKey<FormState>();
+  final email = TextEditingController();
+  final pass = TextEditingController();
+
+  @override
+  void dispose() {
+    email.dispose();
+    pass.dispose();
+    super.dispose();
+  }
 
   InputDecoration _dec(String h) => InputDecoration(
         hintText: h,
@@ -182,7 +197,44 @@ class DesktopLogin extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: C.blue)),
+        errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: C.red)),
+        focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: C.red)),
       );
+
+  String? _validateEmail(String? v) {
+    final value = v?.trim() ?? '';
+    if (value.isEmpty) {
+      return 'Please enter your school email';
+    }
+    final emailRegex = RegExp(r'^[\w.-]+@[\w.-]+\.\w{2,}$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Enter a valid email format (e.g. name@school.edu.my)';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? v) {
+    final value = v ?? '';
+    if (value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
+  }
+
+  void _signIn() {
+    FocusScope.of(context).unfocus();
+    if (!_formKey.currentState!.validate()) return;
+
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const DesktopShell()));
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -198,59 +250,67 @@ class DesktopLogin extends StatelessWidget {
                     color: C.bg,
                     border: Border.all(color: C.line),
                     borderRadius: BorderRadius.circular(16)),
-                child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Center(
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                              color: C.blueBg,
-                              borderRadius: BorderRadius.circular(14)),
-                          child: Icon(Icons.qr_code_2, size: 32, color: C.blue),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                                color: C.blueBg,
+                                borderRadius: BorderRadius.circular(14)),
+                            child:
+                                Icon(Icons.qr_code_2, size: 32, color: C.blue),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 14),
-                      Center(
-                          child: Text('EduSync admin',
-                              style: ts(22, w: FontWeight.w600))),
-                      const SizedBox(height: 14),
-                      Center(
-                          child: Text('Sign in to monitor teacher attendance',
-                              style: ts(13, color: C.muted))),
-                      const SizedBox(height: 14),
-                      TextField(decoration: _dec('name@school.edu.my')),
-                      const SizedBox(height: 14),
-                      TextField(
-                          obscureText: true, decoration: _dec('Password')),
-                      const SizedBox(height: 14),
-                      DeskButton('Sign in',
-                          primary: true,
-                          fill: true,
-                          onTap: () => Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (_) => const DesktopShell()))),
-                      const SizedBox(height: 14),
-                      Center(
-                          child: Text(
-                              'Only authorised school staff can sign in.',
-                              style: ts(12, color: C.hint))),
-                      const SizedBox(height: 6),
-                      Center(
-                        child: TextButton(
-                          onPressed: () {
-                            phoneMode.value = true;
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (_) => const LoginScreen()));
-                          },
-                          child: Text('Teacher? Open the phone view',
-                              style: ts(13, w: FontWeight.w500, color: C.blue)),
+                        const SizedBox(height: 14),
+                        Center(
+                            child: Text('EduSync admin',
+                                style: ts(22, w: FontWeight.w600))),
+                        const SizedBox(height: 14),
+                        Center(
+                            child: Text('Sign in to monitor teacher attendance',
+                                style: ts(13, color: C.muted))),
+                        const SizedBox(height: 14),
+                        TextFormField(
+                            controller: email,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: _validateEmail,
+                            decoration: _dec('name@school.edu.my')),
+                        const SizedBox(height: 14),
+                        TextFormField(
+                            controller: pass,
+                            obscureText: true,
+                            validator: _validatePassword,
+                            decoration: _dec('Password')),
+                        const SizedBox(height: 14),
+                        DeskButton('Sign in',
+                            primary: true, fill: true, onTap: _signIn),
+                        const SizedBox(height: 14),
+                        Center(
+                            child: Text(
+                                'Only authorised school staff can sign in.',
+                                style: ts(12, color: C.hint))),
+                        const SizedBox(height: 6),
+                        Center(
+                          child: TextButton(
+                            onPressed: () {
+                              phoneMode.value = true;
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (_) => const LoginScreen()));
+                            },
+                            child: Text('Teacher? Open the phone view',
+                                style:
+                                    ts(13, w: FontWeight.w500, color: C.blue)),
+                          ),
                         ),
-                      ),
-                    ]),
+                      ]),
+                ),
               ),
             ),
           ),

@@ -1,6 +1,615 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
-import 'main.dart' show LoginScreen;
+import 'app_state.dart';
+import 'main.dart' show LoginScreen, showLanguageSheet;
+
+// ---------- shared print preview & full PDF dialogs ----------
+
+Future<void> showFullPdfDialog(BuildContext context,
+    {String range = '1 Oct - 31 Oct 2026'}) async {
+  const rows = [
+    ['1', 'Cikgu Aina', '22', '0', '0'],
+    ['2', 'Cikgu Hafiz', '21', '5', '0'],
+    ['3', 'Cikgu Mei Ling', '22', '3', '1'],
+    ['4', 'Cikgu Daud', '20', '2', '2'],
+    ['5', 'Cikgu Ramli', '22', '1', '0'],
+    ['6', 'Cikgu Siti', '22', '0', '0'],
+  ];
+  await showDialog<void>(
+    context: context,
+    builder: (ctx) => Dialog(
+      insetPadding: const EdgeInsets.all(16),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 460),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Monthly summary · 1 of 2',
+                        style: ts(13, w: FontWeight.w600)),
+                    OutlinedButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: Text('Close', style: ts(12, color: C.blue)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: C.blueLine, width: 1.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text('Sekolah Kebangsaan Paya Mebi',
+                          style:
+                              ts(13, w: FontWeight.w600, color: Colors.black)),
+                      Text('Staff Attendance Monthly Summary ($range)',
+                          style: ts(11, color: Colors.black54)),
+                      const SizedBox(height: 10),
+                      Container(
+                        color: const Color(0xFF185FA5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 6),
+                        child: Row(children: [
+                          Expanded(
+                              flex: 4,
+                              child: Text('Staff',
+                                  style: ts(11,
+                                      w: FontWeight.w600,
+                                      color: Colors.white))),
+                          Expanded(
+                              flex: 2,
+                              child: Text('Present',
+                                  style: ts(11,
+                                      w: FontWeight.w600,
+                                      color: Colors.white))),
+                          Expanded(
+                              flex: 2,
+                              child: Text('Late',
+                                  style: ts(11,
+                                      w: FontWeight.w600,
+                                      color: Colors.white))),
+                          Expanded(
+                              flex: 2,
+                              child: Text('Early',
+                                  style: ts(11,
+                                      w: FontWeight.w600,
+                                      color: Colors.white))),
+                        ]),
+                      ),
+                      for (final r in rows)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 5),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Color(0xFFE0E0E0))),
+                          ),
+                          child: Row(children: [
+                            Expanded(
+                                flex: 4,
+                                child: Text(r[1],
+                                    style: ts(11, color: Colors.black87))),
+                            Expanded(
+                                flex: 2,
+                                child: Text(r[2],
+                                    style: ts(11, color: Colors.black87))),
+                            Expanded(
+                                flex: 2,
+                                child: Text(r[3],
+                                    style: ts(11,
+                                        color: r[3] != '0'
+                                            ? const Color(0xFFA32D2D)
+                                            : Colors.black87))),
+                            Expanded(
+                                flex: 2,
+                                child: Text(r[4],
+                                    style: ts(11,
+                                        color: r[4] != '0'
+                                            ? const Color(0xFFA32D2D)
+                                            : Colors.black87))),
+                          ]),
+                        ),
+                      const SizedBox(height: 18),
+                      Row(children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(height: 1, color: Colors.black45),
+                              const SizedBox(height: 4),
+                              Text('Prepared by (Admin)',
+                                  style: ts(10, color: Colors.black54)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(height: 1, color: Colors.black45),
+                              const SizedBox(height: 4),
+                              Text('Verified by (Principal)',
+                                  style: ts(10, color: Colors.black54)),
+                            ],
+                          ),
+                        ),
+                      ]),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+Future<void> showPrintPreviewSheet(BuildContext context,
+    {String range = '1 Oct - 31 Oct 2026'}) async {
+  String printer = 'Office printer (HP)';
+  int copies = 1;
+  String pages = 'All (2)';
+  String colour = 'Black and white';
+  bool sent = false;
+
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setS) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+          child: SingleChildScrollView(
+            child: sent
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 12),
+                      Center(
+                        child: Container(
+                          width: 68,
+                          height: 68,
+                          decoration: BoxDecoration(
+                              color: C.greenBg, shape: BoxShape.circle),
+                          child: Icon(Icons.print_outlined,
+                              size: 32, color: C.green),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Center(
+                          child: Text('Sent to printer',
+                              style: ts(20, w: FontWeight.w600))),
+                      const SizedBox(height: 14),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                            color: C.surface,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Row(children: [
+                          Icon(Icons.description_outlined,
+                              size: 26, color: C.blue),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Attendance_Oct2026.pdf',
+                                    style: ts(14, w: FontWeight.w500)),
+                                Text(
+                                    '2 pages, $copies ${copies == 1 ? 'copy' : 'copies'}, $printer',
+                                    style: ts(12, color: C.muted)),
+                              ],
+                            ),
+                          ),
+                        ]),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(children: [
+                        Icon(Icons.check, size: 16, color: C.green),
+                        const SizedBox(width: 8),
+                        Text('Report created', style: ts(13, color: C.green)),
+                      ]),
+                      const SizedBox(height: 6),
+                      Row(children: [
+                        Icon(Icons.check, size: 16, color: C.green),
+                        const SizedBox(width: 8),
+                        Text('Sent to $printer', style: ts(13, color: C.green)),
+                      ]),
+                      const SizedBox(height: 6),
+                      Row(children: [
+                        Icon(Icons.print_outlined, size: 16, color: C.amber),
+                        const SizedBox(width: 8),
+                        Text('Printing: page 1 of 2',
+                            style: ts(13, color: C.amber)),
+                      ]),
+                      const SizedBox(height: 18),
+                      AppButton('View PDF',
+                          icon: Icons.description_outlined,
+                          onTap: () => showFullPdfDialog(ctx, range: range)),
+                      const SizedBox(height: 8),
+                      AppButton('Back to reports',
+                          outlined: true, onTap: () => Navigator.pop(ctx)),
+                    ],
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text('Print report', style: ts(18, w: FontWeight.w600)),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                            color: C.surface,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Column(children: [
+                          Container(
+                            width: 110,
+                            height: 130,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: C.line),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text('Teacher Attendance Report',
+                                    style: ts(7,
+                                        w: FontWeight.w600,
+                                        color: Colors.black)),
+                                const SizedBox(height: 4),
+                                Container(
+                                    height: 6, color: const Color(0xFF185FA5)),
+                                const SizedBox(height: 6),
+                                for (var k = 0; k < 5; k++) ...[
+                                  Container(
+                                      height: 5,
+                                      color: k.isOdd
+                                          ? const Color(0xFFFCEBEB)
+                                          : const Color(0xFFF4F4F2)),
+                                  const SizedBox(height: 5),
+                                ],
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Page 1 of 2  ',
+                                  style: ts(12, color: C.muted)),
+                              InkWell(
+                                onTap: () =>
+                                    showFullPdfDialog(ctx, range: range),
+                                child: Text('View full PDF',
+                                    style: ts(12,
+                                        w: FontWeight.w600, color: C.blue)),
+                              ),
+                            ],
+                          ),
+                        ]),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                              color: C.green, shape: BoxShape.circle),
+                        ),
+                        const SizedBox(width: 6),
+                        Text('Printer connected',
+                            style: ts(12, color: C.green)),
+                      ]),
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: C.line),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Column(
+                          children: gap([
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Printer', style: ts(13, color: C.muted)),
+                                SizedBox(
+                                  width: 185,
+                                  child: PickerField(
+                                    value: printer,
+                                    options: const [
+                                      'Office printer (HP)',
+                                      'Staff room (Canon)'
+                                    ],
+                                    onChanged: (v) => setS(() => printer = v),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Copies', style: ts(13, color: C.muted)),
+                                Row(children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                        Icons.remove_circle_outline,
+                                        size: 20),
+                                    onPressed: copies > 1
+                                        ? () => setS(() => copies--)
+                                        : null,
+                                  ),
+                                  Text('$copies',
+                                      style: ts(14, w: FontWeight.w600)),
+                                  IconButton(
+                                    icon: const Icon(Icons.add_circle_outline,
+                                        size: 20),
+                                    onPressed: () => setS(() => copies++),
+                                  ),
+                                ]),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Pages', style: ts(13, color: C.muted)),
+                                SizedBox(
+                                  width: 140,
+                                  child: PickerField(
+                                    value: pages,
+                                    options: const ['All (2)', 'Page 1 only'],
+                                    onChanged: (v) => setS(() => pages = v),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Colour', style: ts(13, color: C.muted)),
+                                SizedBox(
+                                  width: 165,
+                                  child: PickerField(
+                                    value: colour,
+                                    options: const [
+                                      'Black and white',
+                                      'Colour'
+                                    ],
+                                    onChanged: (v) => setS(() => colour = v),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ], 8),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      AppButton('Print',
+                          icon: Icons.print_outlined,
+                          onTap: () => setS(() => sent = true)),
+                      const SizedBox(height: 8),
+                      AppButton('Save as PDF',
+                          icon: Icons.description_outlined,
+                          outlined: true, onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => const ReportReadyScreen()));
+                      }),
+                    ],
+                  ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+// ---------- admin attendance rules modal (R2-F1) ----------
+
+Future<void> showAttendanceRulesSheet(BuildContext context) async {
+  bool forAkp = false;
+  int lateMin = app.teacherLateMin;
+  int graceMin = app.teacherGraceMin;
+  int earlyMin = app.teacherEarlyMin;
+  int qrSec = app.qrRefreshSeconds;
+
+  void loadRole(bool akp) {
+    forAkp = akp;
+    lateMin = akp ? app.akpLateMin : app.teacherLateMin;
+    graceMin = akp ? app.akpGraceMin : app.teacherGraceMin;
+    earlyMin = akp ? app.akpEarlyMin : app.teacherEarlyMin;
+  }
+
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setS) {
+        Widget roleTab(String label, bool akp) {
+          final sel = forAkp == akp;
+          return Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () => setS(() => loadRole(akp)),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: sel ? C.blueBg : C.bg,
+                  border: Border.all(color: sel ? C.blueLine : C.line),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(label,
+                    style: ts(13,
+                        w: FontWeight.w500, color: sel ? C.blue : C.ink)),
+              ),
+            ),
+          );
+        }
+
+        Widget stepperRow(String label, String value, VoidCallback onMinus,
+            VoidCallback onPlus) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: ts(13, color: C.muted)),
+              Row(children: [
+                IconButton(
+                  icon: const Icon(Icons.remove_circle_outline, size: 20),
+                  onPressed: onMinus,
+                ),
+                SizedBox(
+                  width: 78,
+                  child: Text(value,
+                      textAlign: TextAlign.center,
+                      style: ts(14, w: FontWeight.w600)),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline, size: 20),
+                  onPressed: onPlus,
+                ),
+              ]),
+            ],
+          );
+        }
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text('Attendance rules', style: ts(18, w: FontWeight.w600)),
+                  const SizedBox(height: 12),
+                  Row(children: [
+                    Text('Rules for  ', style: ts(13, color: C.muted)),
+                    roleTab('Teachers', false),
+                    const SizedBox(width: 8),
+                    roleTab('Support staff (AKP)', true),
+                  ]),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: C.line),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Late arrival', style: ts(13, w: FontWeight.w600)),
+                        stepperRow(
+                          'Late after',
+                          formatMinutes(lateMin),
+                          () => setS(() => lateMin -= 5),
+                          () => setS(() => lateMin += 5),
+                        ),
+                        stepperRow(
+                          'Grace period',
+                          '$graceMin min',
+                          () => setS(() {
+                            if (graceMin > 0) graceMin -= 5;
+                          }),
+                          () => setS(() => graceMin += 5),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: C.line),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Early departure',
+                            style: ts(13, w: FontWeight.w600)),
+                        stepperRow(
+                          'Left early before',
+                          formatMinutes(earlyMin),
+                          () => setS(() => earlyMin -= 5),
+                          () => setS(() => earlyMin += 5),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: C.line),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('QR code', style: ts(13, w: FontWeight.w600)),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('New code every',
+                                style: ts(13, color: C.muted)),
+                            Wrap(spacing: 6, children: [
+                              for (final sec in const [3, 4, 5])
+                                ChoiceChip(
+                                  label: Text('$sec s', style: ts(12)),
+                                  selected: qrSec == sec,
+                                  selectedColor: C.blueBg,
+                                  onSelected: (_) => setS(() => qrSec = sec),
+                                ),
+                            ]),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                      'Changes start from the next school day. Past records keep the old rules.',
+                      style: ts(12, color: C.hint)),
+                  const SizedBox(height: 14),
+                  AppButton('Save changes', onTap: () {
+                    app.updateRules(
+                      forAkp: forAkp,
+                      lateMin: lateMin,
+                      graceMin: graceMin,
+                      earlyMin: earlyMin,
+                      qrSeconds: qrSec,
+                    );
+                    Navigator.pop(ctx);
+                    toast(context, 'Attendance rules saved');
+                  }),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+// ---------- admin shell & tabs ----------
 
 class AdminShell extends StatefulWidget {
   const AdminShell({super.key});
@@ -46,38 +655,91 @@ class AdminDashboard extends StatelessWidget {
         ]),
       );
 
+  Widget _quickTile(BuildContext context, IconData icon, String title,
+          String sub, VoidCallback onTap) =>
+      InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: C.line),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                  color: C.blueBg, borderRadius: BorderRadius.circular(10)),
+              child: Icon(icon, size: 18, color: C.blue),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: ts(14, w: FontWeight.w500)),
+                  Text(sub, style: ts(12, color: C.muted)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, size: 18, color: C.muted),
+          ]),
+        ),
+      );
+
   @override
-  Widget build(BuildContext context) => PageBody(
-        children: [
-          const Heading("Today's attendance", sub: 'Mon, 12 Oct - live'),
-          const Row(children: [
-            Expanded(child: StatCard('Present', '38')),
-            SizedBox(width: 8),
-            Expanded(child: StatCard('Late', '4', danger: true)),
-            SizedBox(width: 8),
-            Expanded(child: StatCard('Absent', '2')),
-          ]),
-          Column(
-              children: gap([
-            _violation('Cikgu Hafiz', '7:05 AM - Late'),
-            _violation('Cikgu Mei Ling', '6:58 AM - Late'),
-            _violation('Cikgu Daud', '12:30 PM - Left early'),
-          ], 6)),
-          Column(children: [
-            LineRow('Cikgu Aina', '6:42 AM', rightColor: C.green),
-            LineRow('Cikgu Ramli', '6:35 AM', rightColor: C.green),
-            LineRow('Cikgu Siti', '6:31 AM', rightColor: C.green),
-          ]),
-          Text('Late is after 6:50 AM. Early leave is before 12:50 PM.',
-              style: ts(12, color: C.hint)),
-          Text('Appearance', style: ts(13, w: FontWeight.w500, color: C.muted)),
-          const ThemeChips(),
-          AppButton('Sign out',
-              outlined: true,
-              onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (r) => false)),
-        ],
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: app,
+        builder: (context, _) => PageBody(
+          children: [
+            const Heading("Today's attendance", sub: 'Mon, 12 Oct - live'),
+            const Row(children: [
+              Expanded(child: StatCard('Present', '38')),
+              SizedBox(width: 8),
+              Expanded(child: StatCard('Late', '4', danger: true)),
+              SizedBox(width: 8),
+              Expanded(child: StatCard('Absent', '2')),
+            ]),
+            Column(
+                children: gap([
+              _violation('Cikgu Hafiz', '7:05 AM - Late'),
+              _violation('Cikgu Mei Ling', '6:58 AM - Late'),
+              _violation('Cikgu Daud', '12:30 PM - Left early'),
+            ], 6)),
+            Column(children: [
+              LineRow('Cikgu Aina', '6:42 AM', rightColor: C.green),
+              LineRow('Cikgu Ramli', '6:35 AM', rightColor: C.green),
+              LineRow('Cikgu Siti', '6:31 AM', rightColor: C.green),
+            ]),
+            Text(
+                'Teachers: late after ${app.teacherLateStr}, early before ${app.teacherEarlyStr}. AKP: late after ${app.akpLateStr}. QR every ${app.qrRefreshSeconds}s.',
+                style: ts(12, color: C.hint)),
+            _quickTile(
+              context,
+              Icons.tune,
+              'Attendance rules',
+              'Late and early times, QR timing (${app.qrRefreshSeconds}s)',
+              () => showAttendanceRulesSheet(context),
+            ),
+            _quickTile(
+              context,
+              Icons.language,
+              'Language and account',
+              '${app.language}, email, password',
+              () => showLanguageSheet(context),
+            ),
+            Text('Appearance',
+                style: ts(13, w: FontWeight.w500, color: C.muted)),
+            const ThemeChips(),
+            AppButton('Sign out',
+                outlined: true,
+                onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (r) => false)),
+          ],
+        ),
       );
 }
 
@@ -132,10 +794,10 @@ class _AdminReportsState extends State<AdminReports> {
             icon: Icons.download,
             onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const ReportReadyScreen()))),
-        AppButton('Print',
+        AppButton('Print or preview',
             icon: Icons.print_outlined,
             outlined: true,
-            onTap: () => toast(context, 'Sending to printer...')),
+            onTap: () => showPrintPreviewSheet(context, range: range)),
       ],
       children: [
         Text('Attendance report', style: ts(20, w: FontWeight.w600)),
@@ -258,15 +920,38 @@ class ReportReadyScreen extends StatelessWidget {
           footer: [
             AppButton('Open PDF',
                 icon: Icons.description_outlined,
-                onTap: () => toast(context, 'Opening Attendance_Oct2026.pdf')),
+                onTap: () => showFullPdfDialog(context)),
             AppButton('Print',
                 icon: Icons.print_outlined,
                 outlined: true,
-                onTap: () => toast(context, 'Sending to printer...')),
+                onTap: () => showPrintPreviewSheet(context)),
             AppButton('Share',
-                icon: Icons.download,
+                icon: Icons.share_outlined,
                 outlined: true,
-                onTap: () => toast(context, 'Share sheet would open here')),
+                onTap: () => showDialog<void>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text('Share report',
+                            style: ts(18, w: FontWeight.w600)),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Attendance_Oct2026.pdf',
+                                style: ts(14, w: FontWeight.w500)),
+                            const SizedBox(height: 6),
+                            Text(
+                                'Prototype preview: no PDF is uploaded or shared. In the finished app, this opens your device share sheet.',
+                                style: ts(12, color: C.muted)),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Back to report')),
+                        ],
+                      ),
+                    )),
           ],
           children: [
             const BackHeader('Reports'),
@@ -323,6 +1008,25 @@ class _T {
   }
 }
 
+class _AkpStaff {
+  final String name;
+  final String dept;
+  final String category; // IT, Office, Other
+  final String time;
+  final String status; // On time, Late, Absent, Invited
+  _AkpStaff(this.name, this.dept, this.category, this.time, this.status);
+  String get initials {
+    final clean = name
+        .replaceFirst('En. ', '')
+        .replaceFirst('Pn. ', '')
+        .replaceFirst('Cik ', '');
+    final p = clean.split(' ');
+    return p.length > 1
+        ? (p[0][0] + p[1][0]).toUpperCase()
+        : p[0].substring(0, p[0].length > 1 ? 2 : 1).toUpperCase();
+  }
+}
+
 class AdminTeachers extends StatefulWidget {
   const AdminTeachers({super.key});
   @override
@@ -330,6 +1034,10 @@ class AdminTeachers extends StatefulWidget {
 }
 
 class _AdminTeachersState extends State<AdminTeachers> {
+  bool showAkp = false;
+  String akpFilter = 'All';
+  String q = '';
+
   final list = <_T>[
     _T('Cikgu Aina', true),
     _T('Cikgu Hafiz', true),
@@ -337,12 +1045,33 @@ class _AdminTeachersState extends State<AdminTeachers> {
     _T('Cikgu Daud', true),
     _T('Cikgu Farah', false),
   ];
-  int added = 0; // base: 2 invited (Farah + one not listed)
-  String q = '';
 
-  Future<void> _add() async {
-    final c = TextEditingController();
-    final name = await showModalBottomSheet<String>(
+  final akpList = <_AkpStaff>[
+    _AkpStaff('En. Hafiz', 'IT support', 'IT', '7:28 AM', 'On time'),
+    _AkpStaff('Pn. Rosnah', 'Office clerk', 'Office', '7:31 AM', 'On time'),
+    _AkpStaff('En. Faizal', 'IT support', 'IT', '7:52 AM', 'Late'),
+    _AkpStaff('Pn. Lim', 'Office clerk', 'Office', '7:26 AM', 'On time'),
+    _AkpStaff('Cik Devi', 'Library assistant', 'Other', '7:30 AM', 'On time'),
+    _AkpStaff('En. Roslan', 'Driver', 'Other', 'Not in', 'Absent'),
+  ];
+
+  int added = 0; // base: 2 invited
+
+  bool _prefixMatch(String fullName, String query) {
+    final trimmed = query.trim().toLowerCase();
+    if (trimmed.isEmpty) return true;
+    final lower = fullName.toLowerCase();
+    final stripped = lower
+        .replaceFirst('cikgu ', '')
+        .replaceFirst('en. ', '')
+        .replaceFirst('pn. ', '')
+        .replaceFirst('cik ', '');
+    return lower.startsWith(trimmed) || stripped.startsWith(trimmed);
+  }
+
+  Future<void> _addTeacher() async {
+    String name = '';
+    final res = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       builder: (ctx) => Padding(
@@ -355,8 +1084,8 @@ class _AdminTeachersState extends State<AdminTeachers> {
               Text('Add teacher', style: ts(18, w: FontWeight.w600)),
               const SizedBox(height: 12),
               TextField(
-                controller: c,
                 autofocus: true,
+                onChanged: (v) => name = v,
                 decoration: InputDecoration(
                   hintText: 'Teacher name',
                   border: OutlineInputBorder(
@@ -365,74 +1094,263 @@ class _AdminTeachersState extends State<AdminTeachers> {
               ),
               const SizedBox(height: 12),
               AppButton('Send invite',
-                  onTap: () => Navigator.pop(ctx, c.text.trim())),
+                  onTap: () => Navigator.pop(ctx, name.trim())),
             ]),
       ),
     );
-    if (name == null || name.isEmpty) {
-      return;
-    }
+    if (res == null || res.isEmpty) return;
     setState(() {
-      list.add(_T(name.startsWith('Cikgu') ? name : 'Cikgu $name', false));
+      list.add(_T(res.startsWith('Cikgu') ? res : 'Cikgu $res', false));
       added++;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final shown = list
-        .where((t) => t.name.toLowerCase().contains(q.toLowerCase()))
-        .toList();
-    final invited = 2 + added;
-    return PageBody(
-      footer: [AppButton('Add teacher', icon: Icons.add, onTap: _add)],
-      children: [
-        Heading('Teachers', sub: '42 active - $invited invited'),
-        TextField(
-          onChanged: (v) => setState(() => q = v),
-          decoration: InputDecoration(
-            hintText: 'Search teachers',
-            hintStyle: ts(14, color: C.hint),
-            prefixIcon: Icon(Icons.search, size: 16, color: C.muted),
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: C.line)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: C.blue)),
+  Future<void> _addAkp() async {
+    String name = '';
+    String email = '';
+    String dept = 'IT support';
+    final saved = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setS) => Padding(
+          padding: EdgeInsets.fromLTRB(
+              20, 20, 20, 20 + MediaQuery.of(ctx).viewInsets.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Add support staff', style: ts(18, w: FontWeight.w600)),
+              const SizedBox(height: 4),
+              Text('Register AKP staff using their personal email.',
+                  style: ts(12, color: C.muted)),
+              const SizedBox(height: 12),
+              TextField(
+                autofocus: true,
+                onChanged: (v) => name = v,
+                decoration: InputDecoration(
+                  hintText: 'Full name (e.g. En. Amir)',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (v) => email = v,
+                decoration: InputDecoration(
+                  hintText: 'Personal email (e.g. amir@gmail.com)',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              const SizedBox(height: 10),
+              PickerField(
+                value: dept,
+                options: const [
+                  'IT support',
+                  'Office clerk',
+                  'Library assistant',
+                  'Driver'
+                ],
+                onChanged: (v) => setS(() => dept = v),
+              ),
+              const SizedBox(height: 12),
+              AppButton('Prepare invitation',
+                  onTap: () => Navigator.pop(ctx, true)),
+            ],
           ),
         ),
-        Column(children: [
-          for (final t in shown)
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: C.line))),
-              child: Row(children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration:
-                      BoxDecoration(color: C.blueBg, shape: BoxShape.circle),
-                  child: Text(t.initials,
-                      style: ts(12, w: FontWeight.w500, color: C.blue)),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: Text(t.name, style: ts(14))),
-                t.active
-                    ? Pill('Active', fg: C.green, bg: C.greenBg)
-                    : Pill('Invited', fg: C.amber, bg: C.amberBg),
-              ]),
+      ),
+    );
+    if (saved != true || name.trim().isEmpty) return;
+    final cat = dept == 'IT support'
+        ? 'IT'
+        : (dept == 'Office clerk' ? 'Office' : 'Other');
+    setState(() {
+      akpList.add(_AkpStaff(name.trim(), dept, cat, 'Not in', 'Invited'));
+    });
+    if (!mounted) return;
+    toast(
+        context,
+        email.trim().isEmpty
+            ? 'Invitation prepared for ${name.trim()}'
+            : 'Invitation prepared for ${email.trim()}');
+  }
+
+  Widget _segment(String label, bool akp) {
+    final sel = showAkp == akp;
+    return Expanded(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () => setState(() => showAkp = akp),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 9),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: sel ? C.blueBg : C.bg,
+            border: Border.all(color: sel ? C.blueLine : C.line),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(label,
+              style: ts(13, w: FontWeight.w500, color: sel ? C.blue : C.ink)),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final shownTeachers = list.where((t) => _prefixMatch(t.name, q)).toList();
+    final shownAkp = akpList
+        .where((s) =>
+            (akpFilter == 'All' || s.category == akpFilter) &&
+            _prefixMatch(s.name, q))
+        .toList();
+    final invited = 2 + added;
+
+    return ListenableBuilder(
+      listenable: app,
+      builder: (context, _) => PageBody(
+        footer: [
+          AppButton(
+            showAkp ? 'Add support staff' : 'Add teacher',
+            icon: Icons.add,
+            onTap: showAkp ? _addAkp : _addTeacher,
+          ),
+        ],
+        children: [
+          Heading(
+            showAkp ? 'Support staff (AKP)' : 'Teachers',
+            sub: showAkp
+                ? 'Non-teaching staff, today'
+                : '42 active - $invited invited',
+          ),
+          Row(children: [
+            _segment('Teachers', false),
+            const SizedBox(width: 8),
+            _segment('Support staff (AKP)', true),
+          ]),
+          TextField(
+            onChanged: (v) => setState(() => q = v),
+            decoration: InputDecoration(
+              hintText: showAkp
+                  ? 'Search AKP by starting letters'
+                  : 'Search teachers by starting letters',
+              hintStyle: ts(14, color: C.hint),
+              prefixIcon: Icon(Icons.search, size: 16, color: C.muted),
+              contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: C.line)),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: C.blue)),
             ),
-        ]),
-        NoteBox(Icons.error_outline,
-            '$invited teachers have not finished setup. Send a reminder.',
-            fg: C.amber,
-            bg: C.amberBg,
-            onTap: () => toast(context, 'Reminder sent to $invited teachers')),
-      ],
+          ),
+          if (!showAkp) ...[
+            Column(children: [
+              for (final t in shownTeachers)
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: C.line))),
+                  child: Row(children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: C.blueBg, shape: BoxShape.circle),
+                      child: Text(t.initials,
+                          style: ts(12, w: FontWeight.w500, color: C.blue)),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(t.name, style: ts(14))),
+                    t.active
+                        ? Pill('Active', fg: C.green, bg: C.greenBg)
+                        : Pill('Invited', fg: C.amber, bg: C.amberBg),
+                  ]),
+                ),
+            ]),
+            NoteBox(Icons.error_outline,
+                '$invited teachers have not finished setup. Send a reminder.',
+                fg: C.amber,
+                bg: C.amberBg,
+                onTap: () =>
+                    toast(context, 'Reminder sent to $invited teachers')),
+          ] else ...[
+            Wrap(spacing: 6, children: [
+              for (final f in const ['All', 'IT', 'Office', 'Other'])
+                ChoiceChip(
+                  label: Text(f, style: ts(12)),
+                  selected: akpFilter == f,
+                  selectedColor: C.blueBg,
+                  onSelected: (_) => setState(() => akpFilter = f),
+                ),
+            ]),
+            const Row(children: [
+              Expanded(child: StatCard('Present', '5')),
+              SizedBox(width: 8),
+              Expanded(child: StatCard('Late', '1', danger: true)),
+              SizedBox(width: 8),
+              Expanded(child: StatCard('Absent', '1')),
+            ]),
+            Column(children: [
+              for (final s in shownAkp)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: s.status == 'Late' ? C.redBg : Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                    border: s.status == 'Late'
+                        ? null
+                        : Border(bottom: BorderSide(color: C.line)),
+                  ),
+                  child: Row(children: [
+                    Container(
+                      width: 38,
+                      height: 38,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: C.blueBg, shape: BoxShape.circle),
+                      child: Text(s.initials,
+                          style: ts(12, w: FontWeight.w500, color: C.blue)),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(s.name,
+                              style: ts(14,
+                                  color: s.status == 'Late' ? C.red : C.ink)),
+                          Text(s.dept, style: ts(11, color: C.muted)),
+                        ],
+                      ),
+                    ),
+                    Text(s.time,
+                        style: ts(12,
+                            color: s.status == 'Late' ? C.red : C.muted)),
+                    const SizedBox(width: 8),
+                    s.status == 'On time'
+                        ? Pill('On time', fg: C.green, bg: C.greenBg)
+                        : s.status == 'Late'
+                            ? Pill('Late', fg: C.red, bg: C.redBg)
+                            : s.status == 'Invited'
+                                ? Pill('Invited', fg: C.amber, bg: C.amberBg)
+                                : Pill('Absent', fg: C.muted, bg: C.surface),
+                  ]),
+                ),
+            ]),
+            Text(
+                'Support staff use their own times: late after ${app.akpLateStr}. Change this in Attendance rules.',
+                style: ts(12, color: C.hint)),
+          ],
+        ],
+      ),
     );
   }
 }

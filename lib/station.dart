@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'theme.dart';
+import 'app_state.dart';
 
 const _days = [
   'Monday',
@@ -43,15 +44,17 @@ class StationScreen extends StatefulWidget {
 }
 
 class _StationScreenState extends State<StationScreen> {
-  static const total = 30;
   DateTime now = DateTime.now();
-  int left = 14;
+  late int left;
   int seed = 1;
   Timer? timer;
+
+  int get total => app.qrRefreshSeconds;
 
   @override
   void initState() {
     super.initState();
+    left = total;
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
         now = DateTime.now();
@@ -90,14 +93,16 @@ class _StationScreenState extends State<StationScreen> {
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
-              value: left / total,
+              value: (left / total).clamp(0.0, 1.0),
               minHeight: 8,
               backgroundColor: C.surface,
               valueColor: AlwaysStoppedAnimation(C.blue),
             ),
           ),
           const SizedBox(height: 10),
-          Text('Code refreshes in ${left}s', style: ts(14, color: C.hint)),
+          Text(
+              'New QR code every ${total}s (3 to 5 seconds). Next code in ${left}s',
+              style: ts(14, color: C.hint)),
         ],
       );
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'app_state.dart';
 import 'results.dart';
-import 'main.dart' show LoginScreen;
+import 'main.dart' show LoginScreen, showLanguageSheet, showPasswordSheet;
 
 class TeacherShell extends StatefulWidget {
   const TeacherShell({super.key});
@@ -40,18 +40,32 @@ class TeacherHome extends StatelessWidget {
   Widget build(BuildContext context) => ListenableBuilder(
         listenable: app,
         builder: (context, _) {
+          final akp = app.isAkp;
           final inDone = app.checkIn != null;
           final outDone = app.checkOut != null;
           final label = !inDone
               ? 'Scan to check in'
               : (!outDone ? 'Scan to check out' : 'All done for today');
+          final reminderText = akp
+              ? "Reminder at ${app.akpEarlyStr} if you haven't scanned"
+              : "Reminder at 12:40 PM if you haven't scanned";
+
           return PageBody(children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Mon, 12 Oct', style: ts(12, color: C.muted)),
               const SizedBox(height: 2),
-              Text('Good morning, Cikgu Zanibah',
+              Text(
+                  akp
+                      ? 'Good morning, En. Hafiz'
+                      : 'Good morning, Cikgu Zanibah',
                   style: ts(20, w: FontWeight.w600)),
+              if (akp) ...[
+                const SizedBox(height: 6),
+                Pill('Support staff (AKP): IT support',
+                    fg: C.blue, bg: C.blueBg),
+              ],
             ]),
+            Text('Today', style: ts(13, w: FontWeight.w600, color: C.muted)),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
@@ -62,7 +76,10 @@ class TeacherHome extends StatelessWidget {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Check in', style: ts(13, color: C.muted)),
+                          Text(akp ? 'Work hours' : 'Check in',
+                              style: ts(13,
+                                  w: akp ? FontWeight.w600 : FontWeight.w400,
+                                  color: akp ? C.ink : C.muted)),
                           if (inDone)
                             app.pendingSync && !outDone
                                 ? Pill('Pending sync',
@@ -72,21 +89,39 @@ class TeacherHome extends StatelessWidget {
                                     : Pill('On time',
                                         fg: C.green, bg: C.greenBg),
                         ]),
-                    const SizedBox(height: 4),
-                    Text(app.checkIn ?? 'Not yet',
-                        style: ts(28,
-                            w: FontWeight.w600,
-                            color: inDone ? C.ink : C.hint)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    const SizedBox(height: 6),
+                    Row(children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Check out', style: ts(13, color: C.muted)),
+                            if (akp)
+                              Text('Check in', style: ts(12, color: C.muted)),
+                            Text(app.checkIn ?? 'Not yet',
+                                style: ts(akp ? 22 : 28,
+                                    w: FontWeight.w600,
+                                    color: inDone ? C.ink : C.hint)),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Check out', style: ts(12, color: C.muted)),
                             Text(app.checkOut ?? 'Not yet',
-                                style: ts(13, color: outDone ? C.ink : C.hint)),
-                          ]),
-                    ),
+                                style: ts(14,
+                                    w: FontWeight.w500,
+                                    color: outDone ? C.ink : C.hint)),
+                          ],
+                        ),
+                      ),
+                    ]),
+                    if (akp) ...[
+                      const SizedBox(height: 8),
+                      Text('Work hours ${app.akpLateStr} to ${app.akpEarlyStr}',
+                          style: ts(12, color: C.muted)),
+                    ],
                   ]),
             ),
             Material(
@@ -117,6 +152,10 @@ class TeacherHome extends StatelessWidget {
                         style: ts(17,
                             w: FontWeight.w500,
                             color: inDone && outDone ? C.muted : C.blue)),
+                    if (akp) ...[
+                      const SizedBox(height: 2),
+                      Text('Work hours', style: ts(12, color: C.muted)),
+                    ],
                   ]),
                 ),
               ),
@@ -127,9 +166,7 @@ class TeacherHome extends StatelessWidget {
               child: Row(children: [
                 Icon(Icons.notifications_none, size: 16, color: C.ink),
                 const SizedBox(width: 8),
-                Expanded(
-                    child: Text("Reminder at 12:40 PM if you haven't scanned",
-                        style: ts(12))),
+                Expanded(child: Text(reminderText, style: ts(12))),
               ]),
             ),
           ]);
@@ -162,15 +199,19 @@ class _ScanScreenState extends State<ScanScreen> {
   void scan() {
     if (done) return;
     final out = widget.checkingOut;
+    final outTime = app.isAkp ? '4:35 PM' : '12:58 PM';
+    final okInTime = app.isAkp ? '7:28 AM' : '6:42 AM';
+    final lateInTime = app.isAkp ? '7:52 AM' : '7:05 AM';
+
     switch (outcome) {
       case ScanOutcome.ok:
       case ScanOutcome.late:
         if (out) {
-          app.setCheckOut('12:58 PM');
+          app.setCheckOut(outTime);
           setState(() => done = true);
         } else {
           final late = outcome == ScanOutcome.late;
-          app.setCheckIn(late ? '7:05 AM' : '6:42 AM', late: late);
+          app.setCheckIn(late ? lateInTime : okInTime, late: late);
           _push(checkedInResult(late: late));
         }
         break;
@@ -182,11 +223,11 @@ class _ScanScreenState extends State<ScanScreen> {
         break;
       case ScanOutcome.offline:
         if (out) {
-          app.setCheckOut('12:58 PM', offline: true);
-          _push(offlineResult('12:58 PM'));
+          app.setCheckOut(outTime, offline: true);
+          _push(offlineResult(outTime));
         } else {
-          app.setCheckIn('6:42 AM', offline: true);
-          _push(offlineResult('6:42 AM'));
+          app.setCheckIn(okInTime, offline: true);
+          _push(offlineResult(okInTime));
         }
         break;
     }
@@ -208,7 +249,7 @@ class _ScanScreenState extends State<ScanScreen> {
                       Navigator.of(context).popUntil((r) => r.isFirst)),
           ],
           children: [
-            BackHeader(widget.checkingOut ? 'Scan QR code' : 'Scan QR code'),
+            const BackHeader('Scan QR code'),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 40),
               decoration: BoxDecoration(
@@ -318,8 +359,10 @@ class MyRecordScreen extends StatelessWidget {
           ],
           children: [
             const BackHeader('History'),
-            const Heading('My record',
-                sub: 'Cikgu Aina - 1 Oct to 31 Oct 2026'),
+            Heading('My record',
+                sub: app.isAkp
+                    ? 'En. Hafiz (AKP) - 1 Oct to 31 Oct 2026'
+                    : 'Cikgu Zanibah - 1 Oct to 31 Oct 2026'),
             const Row(children: [
               Expanded(child: StatCard('Days present', '22')),
               SizedBox(width: 8),
@@ -345,39 +388,154 @@ class MyRecordScreen extends StatelessWidget {
 class TeacherProfile extends StatelessWidget {
   const TeacherProfile({super.key});
   @override
-  Widget build(BuildContext context) => PageBody(
-        footer: [
-          AppButton('Sign out',
-              onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (r) => false)),
-        ],
-        children: [
-          const Heading('Profile', sub: 'Cikgu Zanibah - Teacher'),
-          Center(
-            child: Container(
-              width: 72,
-              height: 72,
-              decoration:
-                  BoxDecoration(color: C.blueBg, shape: BoxShape.circle),
-              alignment: Alignment.center,
-              child:
-                  Text('CZ', style: ts(20, w: FontWeight.w500, color: C.blue)),
-            ),
-          ),
-          Text('Appearance', style: ts(13, w: FontWeight.w500, color: C.muted)),
-          const ThemeChips(),
-          Text('Demo controls',
-              style: ts(13, w: FontWeight.w500, color: C.muted)),
-          AppButton('Reset to mockup state', outlined: true, onTap: () {
-            app.resetToMockup();
-            toast(context, 'Reset: checked in 6:42 AM');
-          }),
-          AppButton('Start a new day (not checked in)', outlined: true,
-              onTap: () {
-            app.newDay();
-            toast(context, 'New day: scan to check in');
-          }),
-        ],
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: app,
+        builder: (context, _) {
+          final akp = app.isAkp;
+          return PageBody(
+            footer: [
+              AppButton('Sign out',
+                  outlined: true,
+                  onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (r) => false)),
+            ],
+            children: [
+              Text('Account', style: ts(20, w: FontWeight.w600)),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                    color: C.surface, borderRadius: BorderRadius.circular(12)),
+                child: Row(children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration:
+                        BoxDecoration(color: C.blueBg, shape: BoxShape.circle),
+                    alignment: Alignment.center,
+                    child: Text(akp ? 'EH' : 'CZ',
+                        style: ts(16, w: FontWeight.w600, color: C.blue)),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(akp ? 'En. Hafiz' : 'Cikgu Zanibah',
+                            style: ts(15, w: FontWeight.w600)),
+                        Text(
+                            akp
+                                ? 'Support staff (AKP), SK Paya Mebi'
+                                : 'Teacher, SK Paya Mebi',
+                            style: ts(12, color: C.muted)),
+                      ],
+                    ),
+                  ),
+                ]),
+              ),
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => showLanguageSheet(context),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: C.line),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(children: [
+                    Icon(Icons.language, size: 18, color: C.ink),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: Text('Language',
+                            style: ts(14, w: FontWeight.w500))),
+                    Text(app.language, style: ts(13, color: C.muted)),
+                    const SizedBox(width: 4),
+                    Icon(Icons.chevron_right, size: 18, color: C.muted),
+                  ]),
+                ),
+              ),
+              Text('Email accounts',
+                  style: ts(13, w: FontWeight.w500, color: C.muted)),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  border: Border.all(color: C.line),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!akp) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('DELIMa ID (main)',
+                              style: ts(13, w: FontWeight.w500)),
+                          Pill('Verified', fg: C.green, bg: C.greenBg),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text('zanibah@moe-dl.edu.my',
+                          style: ts(12, color: C.muted)),
+                      Divider(height: 20, color: C.line),
+                    ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Personal email',
+                            style: ts(13, w: FontWeight.w500)),
+                        Pill(akp ? 'Verified' : 'Pending',
+                            fg: akp ? C.green : C.amber,
+                            bg: akp ? C.greenBg : C.amberBg),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(akp ? 'hafiz.it@gmail.com' : 'zanibah.kawi@gmail.com',
+                        style: ts(12, color: C.muted)),
+                  ],
+                ),
+              ),
+              Text(
+                  'You can sign in with either email. If you cannot use DELIMa, ask your admin to verify your personal email.',
+                  style: ts(11, color: C.hint)),
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () =>
+                    showPasswordSheet(context, title: 'Change password'),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: C.line),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(children: [
+                    Icon(Icons.lock_outline, size: 18, color: C.ink),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: Text('Change password',
+                            style: ts(14, w: FontWeight.w500))),
+                    Icon(Icons.chevron_right, size: 18, color: C.muted),
+                  ]),
+                ),
+              ),
+              Text('Appearance',
+                  style: ts(13, w: FontWeight.w500, color: C.muted)),
+              const ThemeChips(),
+              Text('Demo controls',
+                  style: ts(13, w: FontWeight.w500, color: C.muted)),
+              AppButton('Reset to mockup state', outlined: true, onTap: () {
+                app.resetToMockup();
+                toast(context, 'Reset: checked in ${app.checkIn}');
+              }),
+              AppButton('Start a new day (not checked in)', outlined: true,
+                  onTap: () {
+                app.newDay();
+                toast(context, 'New day: scan to check in');
+              }),
+            ],
+          );
+        },
       );
 }
